@@ -20,7 +20,7 @@ public class AppController {
     @KafkaListener(topics = "entity", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
     private void entities(Entity entity){
         log.info("Received message in group entities_consumers: " + entity);
-        this.template.convertAndSend("/topic/darksky", entity);
+        template.convertAndSend("/topic/entity", entity);
     }
 
 }

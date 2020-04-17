@@ -2,7 +2,7 @@
 <template>
   <div class="table">
     <div class="table--title">
-      BreatheEasy Devices
+      BreathEasy Entities
     </div>
     <div class="table__header">
       <div v-for="(key, index) in keys" :key="index">
@@ -13,8 +13,8 @@
       <!-- <div v-for="(key, index) in keys" :key="index">
         {{Object.keys(test[index])}}
       </div> -->
-      <div class="table__content__row" v-for="value in test" :key="value.id">
-          <div class="table__content__row--column" v-for="key in keys" :key="key">
+      <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
+          <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
             {{value[key]}}
           </div>
       </div>
@@ -24,68 +24,58 @@
 
 <script>
 
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+
 export default {
 
   data() {
     return {
-      test: [{  
-        id: 0,
-        lat:38,
-        lon:-78,
-        city_name:"Louisa",
-        timestamp_utc:"2019-03-04T17:00:00",
-        aqi:4,
-        o3:57.3,
-        so2:3.4,
-        no2:5.4,
-        pm10:2.1,
-        pm25:0.9,
-        co:37 
-      },{  
-        id: 1,
-        lat:38,
-        lon:-78,
-        city_name:"Louisa",
-        timestamp_utc:"2019-03-04T17:00:00",
-        aqi:4,
-        o3:57.3,
-        so2:3.4,
-        no2:5.4,
-        pm10:2.1,
-        pm25:0.9,
-        co:37 
-      },{  
-        id: 2,
-        lat:38,
-        lon:-78,
-        city_name:"Louisa",
-        timestamp_utc:"2019-03-04T17:00:00",
-        aqi:4,
-        o3:57.3,
-        so2:3.4,
-        no2:5.4,
-        pm10:2.1,
-        pm25:0.9,
-        co:37 
-      },{  
-        id: 3,
-        lat:38,
-        lon:-78,
-        city_name:"Louisa",
-        timestamp_utc:"2019-03-04T17:00:00",
-        aqi:4,
-        o3:57.3,
-        so2:3.4,
-        no2:5.4,
-        pm10:2.1,
-        pm25:0.9,
-        co:37 
-      }]
+      values: []
     }
+  },
+  mounted() {
+    const serverUrl = 'http://localhost:8080/breatheasy'
+    let ws = new SockJS(serverUrl);
+    const stompClient = Stomp.over(ws);
+
+    stompClient.debug = () => {}
+    stompClient.connect({}, () => {
+      stompClient.subscribe("/topic/entity", (message) => {
+        const { currently, ...rest } = JSON.parse(message.body)
+        const { apparentTemperature, dewPoint, offset, ...entity } = rest
+
+        const oldValue = this.values.findIndex(v => v.latitude == entity.latitude && v.longitude == entity.longitude)
+
+        if(oldValue == -1) {
+          const val = {
+            ...entity,
+            ...currently,
+            new: true,
+            changes: [],
+          }
+          this.values.unshift(val)
+          setTimeout(() => {
+            val.new = false
+          }, 1500)
+        } else {
+          for(var key of this.keys) {
+            if(key in currently) {
+              if(this.values[oldValue][key] != currently[key])
+                this.values[oldValue].changes.push(key)
+              this.values[oldValue][key] = currently[key]
+            }
+          }
+          setTimeout(() => {
+            this.values[oldValue].changes = []
+          }, 1500)
+        }
+      })
+    });
   },
   computed: {
     keys() {
-      return Object.keys(this.test[0])
+      return this.values.length > 0 ? Object.keys(this.values[0]).filter(k => !['apparentTemperature', 'dewPoint', 'offset', 'new', 'changes', 'nChanges'].includes(k)) : []
     }
   }
 
@@ -100,7 +90,7 @@ body {
 }
 
 .table {
-  padding: 2rem 4rem;
+  padding: 2rem 3rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -113,10 +103,9 @@ body {
   }
   &__header {
     font-weight: bold;
-    grid-column-gap: .2rem;
     width: 100%;
     display: grid;
-    grid-template-columns: 3fr 3fr 3fr 6fr 9fr 2fr 2fr 2fr 2fr 3fr 3fr 2fr;
+    grid-template-columns: 4fr 4fr 4fr 4fr 2.5fr 2.5fr 2.5fr 3.5fr 3.5fr 2.5fr 2.5fr 2.5fr;
     border: 1px solid rgb(144, 106, 11);
     & > * {
       padding: .25rem;
@@ -136,16 +125,25 @@ body {
       &:not(:last-child) {
         border-bottom: 1px solid rgb(144, 106, 11);
       }
+      &.new {
+        background-color: goldenrod;
+      }
+      &:not(.new) {
+        transition: background-color 1s ease;
+      }
+      width: 100%;
+      display: grid;
+      grid-template-columns: 4fr 4fr 4fr 4fr 2.5fr 2.5fr 2.5fr 3.5fr 3.5fr 2.5fr 2.5fr 2.5fr;
       & > * {
+        transition: background-color 1s ease;
         padding: .25rem;
         &:not(:last-child) {
           border-right: 1px solid rgb(144, 106, 11);
         }
+        &.change {
+        background-color: goldenrod;
+        }
       }
-      width: 100%;
-      display: grid;
-      grid-template-columns: 3fr 3fr 3fr 6fr 9fr 2fr 2fr 2fr 2fr 3fr 3fr 2fr;
-      grid-column-gap: .2rem;
     }
   }
 }

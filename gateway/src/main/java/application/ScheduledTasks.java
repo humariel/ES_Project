@@ -21,15 +21,29 @@ public class ScheduledTasks {
 
     @Autowired
     private KafkaTemplate<String, Entity> kafkaTemplate;
+
+    private Double[][] coords = new Double[][]{
+        { 40.628883, -8.6590908 },
+        { 40.2, -8.2 },
+        { 41.2, -8.0 },
+        { 40.0, -8.9 },
+        { 40.5, -8.1 },
+        { 40.1, -9.0 },
+        { 41.1, -8.3 },
+        { 40.4, -8.9 },
+        { 40.7, -8.4 }
+    };
+    private int index = 0;
     
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
 
         Entity req = restTemplate.getForObject(
-            "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/40.628883,-8.6590908?exclude=hourly,minutely,daily,alerts,flags",
+            "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/" + coords[index][0] + "," + coords[index][1] + "?exclude=hourly,minutely,daily,alerts,flags",
         Entity.class);
             
         sendKafkaMessage("entity", req);
+        index = (index + 1) % coords.length;
 
     }
 
