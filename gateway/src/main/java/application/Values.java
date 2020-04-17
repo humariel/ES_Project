@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RegularDataDict {
+public class Values {
 
     private double temperature;
     private double apparentTemperature;
@@ -106,62 +106,7 @@ public class RegularDataDict {
     public void setVisibility(int visibility) {
         this.visibility = visibility;
     }
-
-    public RegularDataDict temperature(double temperature) {
-        this.temperature = temperature;
-        return this;
-    }
-
-    public RegularDataDict apparentTemperature(double apparentTemperature) {
-        this.apparentTemperature = apparentTemperature;
-        return this;
-    }
-
-    public RegularDataDict dewPoint(double dewPoint) {
-        this.dewPoint = dewPoint;
-        return this;
-    }
-
-    public RegularDataDict humidity(double humidity) {
-        this.humidity = humidity;
-        return this;
-    }
-
-    public RegularDataDict pressure(double pressure) {
-        this.pressure = pressure;
-        return this;
-    }
-
-    public RegularDataDict ozone(double ozone) {
-        this.ozone = ozone;
-        return this;
-    }
-
-    public RegularDataDict precipIntensity(int precipIntensity) {
-        this.precipIntensity = precipIntensity;
-        return this;
-    }
-
-    public RegularDataDict precipProbability(int precipProbability) {
-        this.precipProbability = precipProbability;
-        return this;
-    }
-
-    public RegularDataDict cloudCover(int cloudCover) {
-        this.cloudCover = cloudCover;
-        return this;
-    }
-
-    public RegularDataDict uvIndex(int uvIndex) {
-        this.uvIndex = uvIndex;
-        return this;
-    }
-
-    public RegularDataDict visibility(int visibility) {
-        this.visibility = visibility;
-        return this;
-    }
-
+    
     @Override
     public String toString() {
         return "{" +

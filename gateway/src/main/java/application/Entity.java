@@ -12,28 +12,8 @@ public class Entity {
     private double latitude;
     private double longitude;
     private String timezone;
-    private RegularDataDict currently;
+    private Values currently;
     private int offset;
-
-    public String toJsonKafka(){
-        JsonObject obj = new JsonObject();
-        obj.addProperty("entity_id", id);
-        obj.addProperty("latitude", latitude);
-        obj.addProperty("longitude", longitude);
-        obj.addProperty("timezone", timezone);
-        obj.addProperty("temperature", currently.getTemperature());
-        obj.addProperty("apparentTemperature", currently.getApparentTemperature());
-        obj.addProperty("dewPoint", currently.getDewPoint());
-        obj.addProperty("humidity", currently.getHumidity());
-        obj.addProperty("pressure", currently.getPressure());
-        obj.addProperty("ozone", currently.getOzone());
-        obj.addProperty("precipIntensity", currently.getPrecipIntensity());
-        obj.addProperty("precipProbability", currently.getPrecipProbability());
-        obj.addProperty("cloudCover", currently.getCloudCover());
-        obj.addProperty("uvIndex", currently.getUvIndex());
-        obj.addProperty("visibility", currently.getVisibility());
-        return obj.toString();
-    }
 
     public double getLatitude() {
         return this.latitude;
@@ -59,11 +39,11 @@ public class Entity {
         this.timezone = timezone;
     }
 
-    public RegularDataDict getCurrently() {
+    public Values getCurrently() {
         return this.currently;
     }
 
-    public void setCurrently(RegularDataDict currently) {
+    public void setCurrently(Values currently) {
         this.currently = currently;
     }
 
