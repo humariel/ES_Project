@@ -18,7 +18,7 @@ pipeline {
         }
         stage('build') {
             steps {
-				sh '$PWD'
+				sh 'ls'
             }
         }
     }
