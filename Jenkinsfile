@@ -19,7 +19,7 @@ pipeline {
         stage('build') {
             steps {
                 dir('build') {
-				    sh 'docker-compose --version'
+				    sh 'docker-compose build'
                 }
             }
         }
