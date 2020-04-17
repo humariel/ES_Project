@@ -1,5 +1,7 @@
 package application;
 
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,8 @@ public class ScheduledTasks {
     public void reportCurrentTime() {
 
         Entity req = restTemplate.getForObject(
-            "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/40.628883,-8.6590908?exclude=hourly,minutely,daily,alerts,flags",
+           "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/40.628883,-8.6590908?exclude=hourly,minutely,daily,alerts,flags",
         Entity.class);
-            
         sendKafkaMessage("entity", req);
 
     }
