@@ -18,9 +18,7 @@ pipeline {
         }
         stage('build') {
             steps {
-				sh '''
-                    $PWD
-                    docker-compose build'''
+				sh '$PWD'
             }
         }
     }
