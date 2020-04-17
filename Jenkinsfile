@@ -2,9 +2,23 @@ pipeline {
 	agent any
 
     stages {
-        stage('test') {
+        stage('Gateway Test') {
             steps {
-                sh 'mvn test'
+				dir('gateway') {
+                	sh 'mvn test'
+				}
+            }
+        }
+        stage('Webserver Test') {
+            steps {
+				dir('webserver') {
+                	sh 'mvn test'
+				}
+            }
+        }
+        stage('build') {
+            steps {
+				sh 'docker-compose build'
             }
         }
     }
