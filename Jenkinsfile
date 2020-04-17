@@ -30,5 +30,25 @@ pipeline {
                 }
             }
         }
+        stage('Publish Gateway') {
+            steps {
+				dir('gateway') {
+                   sh '''
+                        docker tag esp31-gateway 192.168.160.99:5000/esp31-gateway
+                        docker push 192.168.160.99:5000/esp31-gateway
+                    '''
+                }
+            }
+        }
+        stage('Publish Webserver') {
+            steps {
+				dir('gateway') {
+                   sh '''
+                        docker tag esp31-webserver 192.168.160.99:5000/esp31-webserver
+                        docker push 192.168.160.99:5000/esp31-webserver
+                    '''
+                }
+            }
+        }
     }
 }
