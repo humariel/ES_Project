@@ -1,5 +1,6 @@
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Quote.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Controller.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Value.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/ScheduledTasks.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Application.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/Entity.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebserverApplication.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/AppController.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/KafkaConsumerConfig.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebSocketConfig.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/RegularDataDict.java

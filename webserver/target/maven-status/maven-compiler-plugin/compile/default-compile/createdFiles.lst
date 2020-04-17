@@ -1,0 +1,5 @@
+application/Entity.class
+application/KafkaConsumerConfig.class
+application/RegularDataDict.class
+application/AppController.class
+application/WebSocketConfig.class
