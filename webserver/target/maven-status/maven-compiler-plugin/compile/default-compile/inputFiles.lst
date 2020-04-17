@@ -1,5 +1,11 @@
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Quote.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Controller.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Value.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/ScheduledTasks.java
-/home/gabriel/Desktop/BreatheEasy/app/src/main/java/breatheeasy/app/Application.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Repository/BreathData.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/ScheduledTasks.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Requests/RegularDataBlock.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Requests/DarkSkyNowRequest.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Kafka/KConsumer.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Repository/BreathRepo.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Kafka/Kmanager.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Application.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/Requests/RegularDataDict.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/STOMPConfs/WebSocketConfig.java
+/home/zero/Documents/UniAv/4_ano/ES/Proj/BreatheEasy/webserver/src/main/java/breatheeasy/app/APIController.java
