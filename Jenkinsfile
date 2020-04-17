@@ -16,10 +16,17 @@ pipeline {
 				}
             }
         }
-        stage('build') {
+        stage('Build Gateway') {
             steps {
-                dir('build') {
-				    sh 'docker-compose build'
+				dir('gateway') {
+                    sh 'docker build -t esp31-gateway .'
+                }
+            }
+        }
+        stage('Build Webserver') {
+            steps {
+				dir('webserver') {
+                    sh 'docker build -t esp31-webserver .'
                 }
             }
         }
