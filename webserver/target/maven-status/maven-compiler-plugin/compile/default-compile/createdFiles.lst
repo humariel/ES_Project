@@ -1,4 +1,3 @@
-application/Application.class
 application/Entity.class
 application/KafkaConsumerConfig.class
 application/RegularDataDict.class

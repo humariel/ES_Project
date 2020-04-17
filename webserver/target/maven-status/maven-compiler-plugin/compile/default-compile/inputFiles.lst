@@ -1,5 +1,5 @@
 /home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/Entity.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/Application.java
+/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebserverApplication.java
 /home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/AppController.java
 /home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/KafkaConsumerConfig.java
 /home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebSocketConfig.java
