@@ -1,0 +1,9 @@
+package breatheeasy.app.Repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+public interface BreathRepo extends CrudRepository<BreathData, Long>{
+	List<BreathData> findAll();
+}
