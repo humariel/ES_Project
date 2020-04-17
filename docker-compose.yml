@@ -47,11 +47,11 @@ services:
         depends_on: 
             - kafka
 
-    # webserver:
-    #     restart: always
-    #     build: ./webserver
-    #     container_name: webserver
-    #     ports:
-    #         - 8080:8080
-    #     depends_on: 
-    #         - kafka
+    webserver:
+        restart: always
+        build: ./webserver
+        container_name: webserver
+        ports:
+            - 8080:8080
+        depends_on: 
+            - kafka

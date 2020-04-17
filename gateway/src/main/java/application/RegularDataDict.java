@@ -1,4 +1,4 @@
-package gateway;
+package application;
 
 import java.io.Serializable;
 

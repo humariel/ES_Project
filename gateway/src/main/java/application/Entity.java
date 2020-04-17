@@ -1,6 +1,5 @@
-package gateway;
+package application;
 
-import java.io.Serializable;
 import com.google.gson.JsonObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,10 +17,21 @@ public class Entity {
 
     public String toJsonKafka(){
         JsonObject obj = new JsonObject();
-        obj.addProperty("entity_id", this.id);
-        obj.addProperty("latitude", this.latitude);
-        obj.addProperty("longitude", this.longitude);
-        obj.addProperty("timezone", this.timezone);
+        obj.addProperty("entity_id", id);
+        obj.addProperty("latitude", latitude);
+        obj.addProperty("longitude", longitude);
+        obj.addProperty("timezone", timezone);
+        obj.addProperty("temperature", currently.getTemperature());
+        obj.addProperty("apparentTemperature", currently.getApparentTemperature());
+        obj.addProperty("dewPoint", currently.getDewPoint());
+        obj.addProperty("humidity", currently.getHumidity());
+        obj.addProperty("pressure", currently.getPressure());
+        obj.addProperty("ozone", currently.getOzone());
+        obj.addProperty("precipIntensity", currently.getPrecipIntensity());
+        obj.addProperty("precipProbability", currently.getPrecipProbability());
+        obj.addProperty("cloudCover", currently.getCloudCover());
+        obj.addProperty("uvIndex", currently.getUvIndex());
+        obj.addProperty("visibility", currently.getVisibility());
         return obj.toString();
     }
 
