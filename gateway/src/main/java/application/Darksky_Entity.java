@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Darksky_Entity {
+public class Darksky_Entity implements Entity{
 
     private long id;
     private double latitude;

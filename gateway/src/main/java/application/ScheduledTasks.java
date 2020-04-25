@@ -22,7 +22,7 @@ public class ScheduledTasks {
 	private static final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
-    private KafkaTemplate<String, Darksky_Entity> kafkaTemplate;
+    private KafkaTemplate<String, Entity> kafkaTemplate;
 
     private Double[][] coords = new Double[][]{
         { 40.628883, -8.6590908 },
@@ -44,23 +44,28 @@ public class ScheduledTasks {
             "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/" + coords[index][0] + "," + coords[index][1] + "?exclude=hourly,minutely,daily,alerts,flags",
         Darksky_Entity.class);
         sendKafkaMessage("darksky", req);
-        index = (index + 1) % coords.length;
 
         //do same for breezo. send to topic "breezo"
+        Breezo_Entity bre = restTemplate.getForObject(
+            "https://api.breezometer.com/air-quality/v2/current-conditions?lat=" + coords[index][0] + "&lon=" + coords[index][1] + "&key=755455f352dc419aa091647a6b9f4caf&features=pollutants_concentrations", 
+            Breezo_Entity.class);
+        sendKafkaMessage("breezo", bre);
+
+        index = (index + 1) % coords.length;
 
     }
 
-    public void sendKafkaMessage(String topic, Darksky_Entity entity) {
-        ListenableFuture<SendResult<String, Darksky_Entity>> future = kafkaTemplate.send(topic, entity);
+    public void sendKafkaMessage(String topic, Entity entity) {
+        ListenableFuture<SendResult<String, Entity>> future = kafkaTemplate.send(topic, entity);
 
-        future.addCallback(new ListenableFutureCallback<SendResult<String, Darksky_Entity>>() {
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Entity>>() {
             @Override
             public void onFailure(Throwable ex) {
                 logger.info("Unable to send message = [" + entity.toString() + "] due to : " + ex.getMessage());
             }
 
             @Override
-            public void onSuccess(SendResult<String, Darksky_Entity> result) {
+            public void onSuccess(SendResult<String, Entity> result) {
                 logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });

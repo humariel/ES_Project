@@ -27,36 +27,19 @@ public class KafkaConsumerConfig {
     private String logsGroupId;
 
     @Bean
-    public ConsumerFactory<String, Darksky_Entity> consumerFactory_darksky() {
+    public ConsumerFactory<String, Entity> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Darksky_Entity.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Entity.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Darksky_Entity> kafkaListenerContainerFactory_darksky() {
-        ConcurrentKafkaListenerContainerFactory<String, Darksky_Entity> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory_darksky());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, Darksky_Entity> consumerFactory_breezo() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Darksky_Entity.class));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Darksky_Entity> kafkaListenerContainerFactory_breezo() {
-        ConcurrentKafkaListenerContainerFactory<String, Darksky_Entity> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory_breezo());
+    public ConcurrentKafkaListenerContainerFactory<String, Entity> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Entity> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
