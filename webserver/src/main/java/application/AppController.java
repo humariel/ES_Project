@@ -19,18 +19,23 @@ public class AppController {
     private SimpMessagingTemplate template;
 
     private static final Logger log = LoggerFactory.getLogger(AppController.class);
-    private ArrayList<Entity> entities = new ArrayList<>();
+    private ArrayList<Darksky_Entity> entities = new ArrayList<>();
     
-    @KafkaListener(topics = "entity", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
-    private void entities(Entity entity){
+    @KafkaListener(topics = "darksky", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
+    private void darksky_listener(Darksky_Entity entity){
         log.info("Received message in group entities_consumers: " + entity);
         entities.add(entity);
         this.template.convertAndSend("/topic/darksky", entity);
     }
 
     @GetMapping("/api/darksky")
-    public ArrayList<Entity> getDarksky(){
+    public ArrayList<Darksky_Entity> getDarksky(){
         return this.entities;
+    }
+
+    @KafkaListener(topics = "breezo", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
+    private void breezo_listener(Breezo_Entity entity){
+        
     }
 
     @GetMapping("/api/breezo")

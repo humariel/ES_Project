@@ -22,7 +22,7 @@ public class ScheduledTasks {
 	private static final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
-    private KafkaTemplate<String, Entity> kafkaTemplate;
+    private KafkaTemplate<String, Darksky_Entity> kafkaTemplate;
 
     private Double[][] coords = new Double[][]{
         { 40.628883, -8.6590908 },
@@ -40,25 +40,27 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
 
-        Entity req = restTemplate.getForObject(
+        Darksky_Entity req = restTemplate.getForObject(
             "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/" + coords[index][0] + "," + coords[index][1] + "?exclude=hourly,minutely,daily,alerts,flags",
-        Entity.class);
-        sendKafkaMessage("entity", req);
+        Darksky_Entity.class);
+        sendKafkaMessage("darksky", req);
         index = (index + 1) % coords.length;
+
+        //do same for breezo. send to topic "breezo"
 
     }
 
-    public void sendKafkaMessage(String topic, Entity entity) {
-        ListenableFuture<SendResult<String, Entity>> future = kafkaTemplate.send(topic, entity);
+    public void sendKafkaMessage(String topic, Darksky_Entity entity) {
+        ListenableFuture<SendResult<String, Darksky_Entity>> future = kafkaTemplate.send(topic, entity);
 
-        future.addCallback(new ListenableFutureCallback<SendResult<String, Entity>>() {
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Darksky_Entity>>() {
             @Override
             public void onFailure(Throwable ex) {
                 logger.info("Unable to send message = [" + entity.toString() + "] due to : " + ex.getMessage());
             }
 
             @Override
-            public void onSuccess(SendResult<String, Entity> result) {
+            public void onSuccess(SendResult<String, Darksky_Entity> result) {
                 logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });

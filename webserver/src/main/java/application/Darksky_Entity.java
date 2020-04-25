@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Entity {
+public class Darksky_Entity {
 
     private long id;
     private double latitude;
     private double longitude;
     private String timezone;
-    private Values currently;
+    private Darksky_Values currently;
     private int offset;
 
     public double getLatitude() {
@@ -39,11 +39,11 @@ public class Entity {
         this.timezone = timezone;
     }
 
-    public Values getCurrently() {
+    public Darksky_Values getCurrently() {
         return this.currently;
     }
 
-    public void setCurrently(Values currently) {
+    public void setCurrently(Darksky_Values currently) {
         this.currently = currently;
     }
 

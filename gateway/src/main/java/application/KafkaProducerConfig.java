@@ -23,7 +23,7 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, Entity> producerFactory() {
+    public ProducerFactory<String, Darksky_Entity> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -39,12 +39,17 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public NewTopic flightsTopic() {
-        return new NewTopic("entity", 2, (short) 1);
+    public NewTopic darkskyTopic() {
+        return new NewTopic("darksky", 2, (short) 1);
     }
 
     @Bean
-    public KafkaTemplate<String, Entity> kafkaTemplate() {
+    public NewTopic breezoTopic() {
+        return new NewTopic("breezo", 2, (short) 1);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Darksky_Entity> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }
