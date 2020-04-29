@@ -1,7 +1,8 @@
 
 <template>
 <div>
-  <div class="table">
+  <Map/>
+  <!-- <div class="table">
     <div class="table--title">
       BreathEasy Entities
     </div>
@@ -11,9 +12,6 @@
       </div>
     </div>
     <div class="table__content">
-      <!-- <div v-for="(key, index) in keys" :key="index">
-        {{Object.keys(test[index])}}
-      </div> -->
       <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
           <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
             {{value[key]}}
@@ -31,16 +29,13 @@
       </div>
     </div>
     <div class="table__content">
-      <!-- <div v-for="(key, index) in keys" :key="index">
-        {{Object.keys(test[index])}}
-      </div> -->
       <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
           <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
             {{value[key]}}
           </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 </template>
 
@@ -48,9 +43,12 @@
 
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
+import Map from '~/components/UI/Map.vue'
 
 export default {
-
+  components:{
+    Map
+  },
   data() {
     return {
       values: []
