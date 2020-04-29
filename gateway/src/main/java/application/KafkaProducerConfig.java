@@ -39,13 +39,8 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public NewTopic darkskyTopic() {
-        return new NewTopic("darksky", 2, (short) 1);
-    }
-
-    @Bean
     public NewTopic breezoTopic() {
-        return new NewTopic("breezo", 2, (short) 1);
+        return new NewTopic("entity", 2, (short) 1);
     }
 
     @Bean
