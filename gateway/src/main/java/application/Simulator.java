@@ -7,7 +7,7 @@ public class Simulator {
     private final double T_RANDOM_VARIATION = 0.001;
     private final double SECONDS_IN_DAY = 86400;
     //how many seconds between simulations
-    private final double REQUEST_RATE = 1;
+    private final double REQUEST_RATE = 0.1;
     private final double T_INCREMENT = (1/SECONDS_IN_DAY) * REQUEST_RATE;
 
     //temperature
