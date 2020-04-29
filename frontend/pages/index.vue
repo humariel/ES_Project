@@ -1,5 +1,6 @@
 
 <template>
+<div>
   <div class="table">
     <div class="table--title">
       BreathEasy Entities
@@ -20,6 +21,27 @@
       </div>
     </div>
   </div>
+  <div class="table">
+    <div class="table--title">
+      BreathEasy Entities
+    </div>
+    <div class="table__header">
+      <div v-for="(key, index) in keys" :key="index">
+        {{key}}
+      </div>
+    </div>
+    <div class="table__content">
+      <!-- <div v-for="(key, index) in keys" :key="index">
+        {{Object.keys(test[index])}}
+      </div> -->
+      <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
+          <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
+            {{value[key]}}
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
@@ -41,7 +63,7 @@ export default {
 
     stompClient.debug = () => {}
     stompClient.connect({}, () => {
-      stompClient.subscribe("/topic/entity", (message) => {
+      stompClient.subscribe("/topic/darksky", (message) => {
         const { currently, ...rest } = JSON.parse(message.body)
         const { apparentTemperature, dewPoint, offset, ...entity } = rest
 
