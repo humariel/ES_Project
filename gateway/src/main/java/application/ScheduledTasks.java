@@ -13,13 +13,17 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
+import java.util.UUID;
+import java.sql.Timestamp;
+
 
 @Component
 public class ScheduledTasks {
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-	private static final RestTemplate restTemplate = new RestTemplate();
+    private static final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
     private KafkaTemplate<String, Entity> kafkaTemplate;
@@ -36,24 +40,11 @@ public class ScheduledTasks {
         { 40.7, -8.4 }
     };
     private int index = 0;
-    
+
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
 
-        Darksky_Entity req = restTemplate.getForObject(
-            "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/" + coords[index][0] + "," + coords[index][1] + "?exclude=hourly,minutely,daily,alerts,flags",
-        Darksky_Entity.class);
-        sendKafkaMessage("darksky", req);
-
-        //do same for breezo. send to topic "breezo"
-        /* try {
-            Breezo_Entity bre = restTemplate.getForObject(
-                "https://api.breezometer.com/air-quality/v2/current-conditions?lat=" + coords[index][0] + "&lon=" + coords[index][1] + "&key=755455f352dc419aa091647a6b9f4caf&features=pollutants_concentrations", 
-                Breezo_Entity.class);
-            sendKafkaMessage("breezo", bre);
-        } catch(Error e) {
-
-        } */
+        sendKafkaMessage("entity", Simulator.simulate(UUID.randomUUID().toString(), coords[index][0], coords[index][1]));
 
         index = (index + 1) % coords.length;
 
