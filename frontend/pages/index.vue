@@ -3,7 +3,7 @@
 <div>
   <div class="table">
     <div class="table--title">
-      BreathEasy Entities
+      Darksy Entities
     </div>
     <div class="table__header">
       <div v-for="(key, index) in keys" :key="index">
@@ -23,7 +23,7 @@
   </div>
   <div class="table">
     <div class="table--title">
-      BreathEasy Entities
+      Breezomeeter Entities
     </div>
     <div class="table__header">
       <div v-for="(key, index) in keys" :key="index">
@@ -53,7 +53,8 @@ export default {
 
   data() {
     return {
-      values: []
+      values: [],
+      breezoValues: []
     }
   },
   mounted() {
@@ -93,12 +94,46 @@ export default {
           }, 1500)
         }
       })
+      stompClient.subscribe("/topic/breezo", (message) => {
+        const { pollutants, ...rest } = JSON.parse(message.body)
+        const { apparentTemperature, dewPoint, offset, ...entity } = rest
+
+        const oldValue = this.breezoValues.findIndex(v => v.latitude == entity.latitude && v.longitude == entity.longitude)
+
+        if(oldValue == -1) {
+          const val = {
+            ...entity,
+            ...currently,
+            new: true,
+            changes: [],
+          }
+          this.values.unshift(val)
+          setTimeout(() => {
+            val.new = false
+          }, 1500)
+        } else {
+          for(var key of this.keys) {
+            if(key in currently) {
+              if(this.values[oldValue][key] != currently[key])
+                this.values[oldValue].changes.push(key)
+              this.values[oldValue][key] = currently[key]
+            }
+          }
+          setTimeout(() => {
+            this.values[oldValue].changes = []
+          }, 1500)
+        }
+      })
     });
   },
   computed: {
     keys() {
       return this.values.length > 0 ? Object.keys(this.values[0]).filter(k => !['apparentTemperature', 'dewPoint', 'offset', 'new', 'changes', 'nChanges'].includes(k)) : []
+    },
+    breezoKeys() {
+
     }
+
   }
 
 }
