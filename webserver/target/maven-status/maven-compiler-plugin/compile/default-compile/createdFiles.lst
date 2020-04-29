@@ -1,5 +1,8 @@
+application/Parish.class
 application/Entity.class
+application/WebserverApplication.class
+application/Geometry.class
 application/KafkaConsumerConfig.class
-application/RegularDataDict.class
+application/EntityRepository.class
 application/AppController.class
 application/WebSocketConfig.class

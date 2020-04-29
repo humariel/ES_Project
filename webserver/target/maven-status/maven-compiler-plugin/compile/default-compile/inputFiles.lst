@@ -1,6 +1,8 @@
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/Entity.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebserverApplication.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/AppController.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/KafkaConsumerConfig.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/WebSocketConfig.java
-/home/gabriel/Desktop/BreatheEasy/webserver/src/main/java/application/RegularDataDict.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/KafkaConsumerConfig.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/AppController.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/Entity.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/Parish.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/WebserverApplication.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/WebSocketConfig.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/EntityRepository.java
+/home/enamak/ua/es/BreatheEasy/webserver/src/main/java/application/Geometry.java

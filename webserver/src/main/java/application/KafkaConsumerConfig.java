@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +18,7 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress;
+    private String bootstrapAddress = "localhost:9092";
     @Value(value = "${kafka.consumer.group-id}")
     private String groupId;
     @Value(value = "${kafka.consumer.logs-id}")
