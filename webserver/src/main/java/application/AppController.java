@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +32,16 @@ public class AppController {
         this.template.convertAndSend("/topic/darksky", entity);
     }
 
-    @GetMapping("/api/darksky")
-    public ArrayList<Darksky_Entity> getDarksky(){
+    @GetMapping("/api/darksky/all")
+    public ArrayList<Darksky_Entity> getDarkskyAll(){
         return this.darksky;
+    }
+
+    @GetMapping("/api/darksky/time")
+    public ArrayList<Darksky_Entity> getDarkskyByTime(@RequestParam long start, @RequestParam long end){
+        return this.darksky.stream()
+                .filter(entity -> entity.getTimestamp() > start && entity.getTimestamp() < end)
+                .collect(Collectors.toCollection(ArrayList<Darksky_Entity>::new));
     }
 
     @KafkaListener(topics = "breezo", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
@@ -41,9 +51,16 @@ public class AppController {
         this.template.convertAndSend("/topic/breezo", entity);
     }
 
-    @GetMapping("/api/breezo")
-    public ArrayList<Breezo_Entity> getBreezo(){
+    @GetMapping("/api/breezo/all")
+    public ArrayList<Breezo_Entity> getBreezoAll(){
         return this.breezo;
+    }
+
+    @GetMapping("/api/breezo/time")
+    public ArrayList<Breezo_Entity> getBreezoByTime(@RequestParam long start, @RequestParam long end){
+        return this.breezo.stream()
+                .filter(entity -> entity.getTimestamp() > start && entity.getTimestamp() < end)
+                .collect(Collectors.toCollection(ArrayList<Breezo_Entity>::new));
     }
 
 }

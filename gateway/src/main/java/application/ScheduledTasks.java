@@ -13,42 +13,52 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
+import java.sql.Timestamp;
+
 
 @Component
 public class ScheduledTasks {
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-	private static final RestTemplate restTemplate = new RestTemplate();
+    private static final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
     private KafkaTemplate<String, Entity> kafkaTemplate;
 
     private Double[][] coords = new Double[][]{
-        { 40.628883, -8.6590908 },
-        { 40.2, -8.2 },
-        { 41.2, -8.0 },
-        { 40.0, -8.9 },
-        { 40.5, -8.1 },
-        { 40.1, -9.0 },
-        { 41.1, -8.3 },
-        { 40.4, -8.9 },
-        { 40.7, -8.4 }
+        { 40.628883, -8.6590908 }
+        // { 40.2, -8.2 },
+        // { 41.2, -8.0 },
+        // { 40.0, -8.9 },
+        // { 40.5, -8.1 },
+        // { 40.1, -9.0 },
+        // { 41.1, -8.3 },
+        // { 40.4, -8.9 },
+        // { 40.7, -8.4 }
     };
     private int index = 0;
     
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
 
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
+
         Darksky_Entity req = restTemplate.getForObject(
             "https://api.darksky.net/forecast/438151d66be4ce981bc94398c2428874/" + coords[index][0] + "," + coords[index][1] + "?exclude=hourly,minutely,daily,alerts,flags",
         Darksky_Entity.class);
+        req.setTimestamp(timestamp.getTime());
         sendKafkaMessage("darksky", req);
 
         //do same for breezo. send to topic "breezo"
         Breezo_Entity bre = restTemplate.getForObject(
             "https://api.breezometer.com/air-quality/v2/current-conditions?lat=" + coords[index][0] + "&lon=" + coords[index][1] + "&key=755455f352dc419aa091647a6b9f4caf&features=pollutants_concentrations", 
             Breezo_Entity.class);
+        bre.setLatitude(coords[index][0]);
+        bre.setLongitude(coords[index][1]);
+        bre.setTimestamp(timestamp.getTime());
         sendKafkaMessage("breezo", bre);
 
         index = (index + 1) % coords.length;

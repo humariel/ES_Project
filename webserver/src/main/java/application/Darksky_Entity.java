@@ -14,6 +14,7 @@ public class Darksky_Entity implements Entity{
     private String timezone;
     private Darksky_Values currently;
     private int offset;
+    private long timestamp;
 
     public double getLatitude() {
         return this.latitude;
@@ -55,6 +56,14 @@ public class Darksky_Entity implements Entity{
         this.offset = offset;
     }
 
+    public long getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -63,8 +72,8 @@ public class Darksky_Entity implements Entity{
             ", timezone='" + getTimezone() + "'" +
             ", currently='" + getCurrently() + "'" +
             ", offset='" + getOffset() + "'" +
+            ", timestamp=" + getTimestamp() + "''" +
             "}";
     }
     
-
 }
