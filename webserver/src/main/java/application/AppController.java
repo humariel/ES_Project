@@ -20,23 +20,23 @@ public class AppController {
     private SimpMessagingTemplate template;
 
     private static final Logger log = LoggerFactory.getLogger(AppController.class);
-    private ArrayList<Entity> darksky = new ArrayList<>();
+    private ArrayList<Entity> entities = new ArrayList<>();
     
     @KafkaListener(topics = "entity", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
     private void darksky_listener(Entity entity){
         log.info("Received message at topic darksky: " + entity);
-        darksky.add(entity);
+        entities.add(entity);
         this.template.convertAndSend("/topic/darksky", entity);
     }
 
     @GetMapping("/api/darksky/all")
     public ArrayList<Entity> getDarkskyAll(){
-        return this.darksky;
+        return this.entities;
     }
 
     @GetMapping("/api/darksky/time")
     public ArrayList<Entity> getDarkskyByTime(@RequestParam long start, @RequestParam long end){
-        return this.darksky.stream()
+        return this.entities.stream()
                 .filter(entity -> entity.getTimestamp() > start && entity.getTimestamp() < end)
                 .collect(Collectors.toCollection(ArrayList<Entity>::new));
     }
