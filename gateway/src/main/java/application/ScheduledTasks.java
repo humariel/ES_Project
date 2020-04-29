@@ -46,10 +46,14 @@ public class ScheduledTasks {
         sendKafkaMessage("darksky", req);
 
         //do same for breezo. send to topic "breezo"
-        Breezo_Entity bre = restTemplate.getForObject(
-            "https://api.breezometer.com/air-quality/v2/current-conditions?lat=" + coords[index][0] + "&lon=" + coords[index][1] + "&key=755455f352dc419aa091647a6b9f4caf&features=pollutants_concentrations", 
-            Breezo_Entity.class);
-        sendKafkaMessage("breezo", bre);
+        /* try {
+            Breezo_Entity bre = restTemplate.getForObject(
+                "https://api.breezometer.com/air-quality/v2/current-conditions?lat=" + coords[index][0] + "&lon=" + coords[index][1] + "&key=755455f352dc419aa091647a6b9f4caf&features=pollutants_concentrations", 
+                Breezo_Entity.class);
+            sendKafkaMessage("breezo", bre);
+        } catch(Error e) {
+
+        } */
 
         index = (index + 1) % coords.length;
 
