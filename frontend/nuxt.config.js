@@ -1,6 +1,6 @@
 
 export default {
-  mode: 'universal',
+  mode: 'spa',
   /*
   ** Headers of the page
   */
@@ -28,6 +28,10 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {
+      src: '~plugins/nuxt-client-init.js',
+     ssr: false
+    }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -41,7 +45,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    'nuxt-leaflet'
   ],
   /*
   ** Axios module configuration
