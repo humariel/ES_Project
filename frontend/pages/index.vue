@@ -6,18 +6,20 @@
       <l-geo-json :geojson="geojson" />
       <l-marker @click="selectedEntity = entity.id" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
         <l-tooltip>
-          <div v-for="key of Object.keys(entity)" :key="key">
+          <div><span>ID: </span>{{entity.id}}</div>
+          <div><span>Location: </span>{{entity.location}}</div>
+          <div v-for="key of keys" :key="key">
             <span>{{key}}:</span>
-            {{entity[key]}}
+            {{entity[key].toFixed(2)}}
           </div>
         </l-tooltip>
       </l-marker>
     </l-map>
-    <transition name="translate-fade">
+    <transition mode="out-in" name="translate-fade">
       <div :key="selectedEntity" class="map__sidebar" v-if="selectedEntity">
         <div>{{selectedEntity}}</div>
         <div>Últimos 100 valores</div>
-        <Chart v-for="key of keys" :key="key" :label="key" :values="values[selectedEntity][key]"/>
+        <Chart v-for="key of keys.slice(0, 3)" :key="key" :label="key" :values="values[selectedEntity][key]"/>
       </div>
     </transition>
   </div>
@@ -77,11 +79,12 @@ export default {
         for(var key of this.keys) {
           if(!this.values[value.entity][key])
             this.values[value.entity][key] = []
-          this.values[value.entity][key].unshift({
+          this.values[value.entity][key] = this.values[value.entity][key].concat({
             label: value.timestamp,
             value: value[key]
           })
-          this.values[value.entity][key] = this.values[value.entity][key].slice(0, 100);
+          if(this.values[value.entity][key].length > 100) 
+            this.values[value.entity][key] = this.values[value.entity][key].slice(1);
         }
         
       })

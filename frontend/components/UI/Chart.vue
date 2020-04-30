@@ -1,5 +1,5 @@
 <template>
-    <chartjs-line
+  <!-- <chartjs-line
         :backgroundcolor="bgColor"
         :bordercolor="borderColor"
         :beginzero="true"
@@ -7,28 +7,107 @@
         :data="vals"
         :datalabel="label"
         :labels="labels"
-    />
+  />-->
+  <div id="chart">
+    <apexcharts type="line" height="350" ref="chart" :options="chartOptions" :series="series"></apexcharts>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        values: Array,
-        label: String
+  props: {
+    values: Array,
+    label: String
+  },
+  computed: {
+    series() {
+      return [
+          {
+            name: this.label.slice(0, 1).toUpperCase() + this.label.slice(1),
+            data: this.values.map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+          }
+      ]
     },
-    computed: {
-        labels() {
-            return this.values.map(v => v.label)
+  },
+  data() {
+    return {
+      chartOptions: {
+        chart: {
+          id: "realtime",
+          height: 200,
+          type: "line",
+          animations: {
+            enabled: true,
+            easing: "linear",
+            dynamicAnimation: {
+              speed: 250
+            }
+          },
+          toolbar: {
+            show: false
+          },
+          zoom: {
+            enabled: false
+          }
         },
-        vals() {
-            return this.values.map(v => v.value)
+        dataLabels: {
+          enabled: false
         },
-    },
-    data() {
-        return {
-            bgColor: "#81894e",
-            borderColor: "#81894e",
-        };
-    }
+        stroke: {
+          curve: "smooth"
+        },
+        title: {
+          text: this.label.slice(0, 1).toUpperCase() + this.label.slice(1),
+          align: "left"
+        },
+        markers: {
+          size: 0
+        },
+        xaxis: {
+            type: 'datetime',
+            tickAmount: 6,
+            labels: {
+                formatter: function (value, timestamp) {
+                    const date = new Date(timestamp)
+                    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+                }, 
+            }
+        },
+        legend: {
+          show: false
+        }
+      }
+    };
+  },
+  mounted: function() {
+    /* var me = this;
+    window.setInterval(function() {
+      getNewSeries(lastDate, {
+        min: 10,
+        max: 90
+      });
+
+      me.$refs.chart.updateSeries([
+        {
+          data: data
+        }
+      ]);
+    }, 1000);
+
+    // every 60 seconds, we reset the data to prevent memory leaks
+    window.setInterval(function() {
+      resetData();
+
+      me.$refs.chart.updateSeries(
+        [
+          {
+            data
+          }
+        ],
+        false,
+        true
+      );
+    }, 60000); */
+  }
 };
 </script>

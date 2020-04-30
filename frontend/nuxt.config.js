@@ -55,6 +55,7 @@ export default {
   ** Build configuration
   */
   build: {
+    vendor : ['vue-apexchart'],
     /*
     ** You can extend webpack config here
     */
