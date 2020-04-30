@@ -1,137 +1,98 @@
 
 <template>
-<div>
-  <Map/>
-  <!-- <div class="table">
-    <div class="table--title">
-      Darksy Entities
-    </div>
-    <div class="table__header">
-      <div v-for="(key, index) in keys" :key="index">
-        {{key}}
-      </div>
-    </div>
-    <div class="table__content">
-      <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
-          <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
-            {{value[key]}}
+  <div class="map">
+    <l-map :class="{margin: selectedEntity}" class="map--map" @click="selectedEntity = null" :zoom=13 :center="[40.627343, -8.654386]">
+      <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+      <l-geo-json :geojson="geojson" />
+      <l-marker @click="selectedEntity = entity.id" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
+        <l-tooltip>
+          <div v-for="key of Object.keys(entity)" :key="key">
+            <span>{{key}}:</span>
+            {{entity[key]}}
           </div>
+        </l-tooltip>
+      </l-marker>
+    </l-map>
+    <transition name="translate-fade">
+      <div :key="selectedEntity" class="map__sidebar" v-if="selectedEntity">
+        <div>{{selectedEntity}}</div>
+        <div>Últimos 100 valores</div>
+        <Chart v-for="key of keys" :key="key" :label="key" :values="values[selectedEntity][key]"/>
       </div>
-    </div>
+    </transition>
   </div>
-  <div class="table">
-    <div class="table--title">
-      Breezomeeter Entities
-    </div>
-    <div class="table__header">
-      <div v-for="(key, index) in keys" :key="index">
-        {{key}}
-      </div>
-    </div>
-    <div class="table__content">
-      <div :class="{new: value.new}" class="table__content__row" v-for="value in values" :key="value.id">
-          <div :class="{change: value.changes && value.changes.includes(key)}" class="table__content__row--column" v-for="key in keys" :key="key">
-            {{value[key]}}
-          </div>
-      </div>
-    </div>
-  </div> -->
-</div>
 </template>
 
 <script>
 
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
-import Map from '~/components/UI/Map.vue'
+import axios from 'axios'
+import Chart from '@/components/UI/Chart'
 
 export default {
-  components:{
-    Map
+  components: {
+    Chart
   },
   data() {
     return {
-      values: [],
-      breezoValues: []
+      entities: [],
+      selectedEntity: null,
+      values: {}
     }
   },
-  mounted() {
+  async asyncData() {
+    return {
+      geojson: (await axios.get('/geojson/aveiro.geojson')).data
+    }
+  },
+  async created () {
+    
     const serverUrl = 'http://localhost:8080/breatheasy'
     let ws = new SockJS(serverUrl);
     const stompClient = Stomp.over(ws);
-
     stompClient.debug = () => {}
+
     stompClient.connect({}, () => {
-      stompClient.subscribe("/topic/darksky", (message) => {
-        const { currently, ...rest } = JSON.parse(message.body)
-        const { apparentTemperature, dewPoint, offset, ...entity } = rest
 
-        const oldValue = this.values.findIndex(v => v.latitude == entity.latitude && v.longitude == entity.longitude)
+      console.log("Connected")
 
-        if(oldValue == -1) {
-          const val = {
-            ...entity,
-            ...currently,
-            new: true,
-            changes: [],
-          }
-          this.values.unshift(val)
-          setTimeout(() => {
-            val.new = false
-          }, 1500)
-        } else {
-          for(var key of this.keys) {
-            if(key in currently) {
-              if(this.values[oldValue][key] != currently[key])
-                this.values[oldValue].changes.push(key)
-              this.values[oldValue][key] = currently[key]
-            }
-          }
-          setTimeout(() => {
-            this.values[oldValue].changes = []
-          }, 1500)
+      stompClient.subscribe("/topic/value", (message) => {
+        const value = JSON.parse(message.body)
+
+        // Adicionar entidade ao array de markers
+        const idx = this.entities.findIndex(e => e.id == value.entity)
+        if(idx != -1)
+          this.entities.splice(idx, 1)
+        this.entities.push({
+          ...value,
+          id: value.entity,
+          location: value.location.coords
+        })
+
+        // Adicionar valor ao array de valores da entidade
+        if(!this.values[value.entity])
+          this.values[value.entity] = {}
+          
+        for(var key of this.keys) {
+          if(!this.values[value.entity][key])
+            this.values[value.entity][key] = []
+          this.values[value.entity][key].unshift({
+            label: value.timestamp,
+            value: value[key]
+          })
+          this.values[value.entity][key] = this.values[value.entity][key].slice(0, 100);
         }
+        
       })
-      stompClient.subscribe("/topic/breezo", (message) => {
-        const { pollutants, ...rest } = JSON.parse(message.body)
-        const { apparentTemperature, dewPoint, offset, ...entity } = rest
-
-        const oldValue = this.breezoValues.findIndex(v => v.latitude == entity.latitude && v.longitude == entity.longitude)
-
-        if(oldValue == -1) {
-          const val = {
-            ...entity,
-            ...currently,
-            new: true,
-            changes: [],
-          }
-          this.values.unshift(val)
-          setTimeout(() => {
-            val.new = false
-          }, 1500)
-        } else {
-          for(var key of this.keys) {
-            if(key in currently) {
-              if(this.values[oldValue][key] != currently[key])
-                this.values[oldValue].changes.push(key)
-              this.values[oldValue][key] = currently[key]
-            }
-          }
-          setTimeout(() => {
-            this.values[oldValue].changes = []
-          }, 1500)
-        }
-      })
+      
     });
+
   },
   computed: {
     keys() {
-      return this.values.length > 0 ? Object.keys(this.values[0]).filter(k => !['apparentTemperature', 'dewPoint', 'offset', 'new', 'changes', 'nChanges'].includes(k)) : []
-    },
-    breezoKeys() {
-
+      return Object.keys(this.entities[0]).filter(k => !['id', 'entity', 'location', 'timestamp', 'parish'].includes(k))
     }
-
   }
 
 }
@@ -144,65 +105,39 @@ body {
   box-sizing: border-box;
 }
 
-.table {
-  padding: 2rem 3rem;
-  width: 100%;
+.map {
   display: flex;
-  align-items: center;
-  flex-direction: column;
-  &--title {
-    font-weight: bold;
-    color: rgb(144, 106, 11);
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
-  &__header {
-    font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100%;
+  &--map {
+    transition: margin .5s;
     width: 100%;
-    display: grid;
-    grid-template-columns: 4fr 4fr 4fr 4fr 2.5fr 2.5fr 2.5fr 3.5fr 3.5fr 2.5fr 2.5fr 2.5fr;
-    border: 1px solid rgb(144, 106, 11);
-    & > * {
-      padding: .25rem;
-      &:not(:last-child) {
-        border-right: 1px solid rgb(144, 106, 11);
-      }
+    height: 100%;
+    z-index: 1;
+    &.margin {
+      margin-right: 20rem;
     }
   }
-  &__content {
-    border: 1px solid rgb(144, 106, 11);
-    border-top: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    &__row {
-      &:not(:last-child) {
-        border-bottom: 1px solid rgb(144, 106, 11);
-      }
-      &.new {
-        background-color: goldenrod;
-      }
-      &:not(.new) {
-        transition: background-color 1s ease;
-      }
-      width: 100%;
-      display: grid;
-      grid-template-columns: 4fr 4fr 4fr 4fr 2.5fr 2.5fr 2.5fr 3.5fr 3.5fr 2.5fr 2.5fr 2.5fr;
-      & > * {
-        transition: background-color 1s ease;
-        padding: .25rem;
-        &:not(:last-child) {
-          border-right: 1px solid rgb(144, 106, 11);
-        }
-        &.change {
-        background-color: goldenrod;
-        }
-      }
-    }
-  }
+  &__sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    width: 30rem;
+    background-color: white;
+    z-index: 2;
+  } 
 }
 
-
+.translate-fade-enter-active, .translate-fade-leave-active {
+  transition: transform .5s;
+}
+.translate-fade-enter, .translate-fade-leave-to {
+  transform: translateX(110%);
+}
 
 </style>

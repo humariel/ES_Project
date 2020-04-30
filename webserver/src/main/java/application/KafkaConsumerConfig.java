@@ -18,25 +18,27 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress = "localhost:9092";
+    private String bootstrapAddress;
     @Value(value = "${kafka.consumer.group-id}")
     private String groupId;
     @Value(value = "${kafka.consumer.logs-id}")
     private String logsGroupId;
 
     @Bean
-    public ConsumerFactory<String, Entity> consumerFactory() {
+    public ConsumerFactory<String, Value> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(Entity.class));
+        JsonDeserializer<Value> deserializer = new JsonDeserializer<>();
+        deserializer.addTrustedPackages("*");
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Entity> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Entity> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, Value> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Value> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

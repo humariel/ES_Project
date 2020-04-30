@@ -1,7 +1,5 @@
 package application;
 
-import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,9 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
-import java.sql.Timestamp;
 
 
 @Component
@@ -23,39 +21,91 @@ public class ScheduledTasks {
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-    private static final RestTemplate restTemplate = new RestTemplate();
 
     private final Simulator simulator = new Simulator();
 
     @Autowired
-    private KafkaTemplate<String, Entity> kafkaTemplate;
+    private KafkaTemplate<String, Value> kafkaTemplate;
 
-    private Double[][] coords = new Double[][]{
-        { 40.633084, -8.660537 },
-    };
+    private final Double[][] coords = new Double[][]{
+        {40.633084, -8.660537},
+        {40.635691, -8.659498},
+        {40.627348, -8.653447},
+        {40.631554, -8.650752},
+        {40.639417, -8.646243},
+        {40.623084, -8.658191},
+        {40.614370, -8.639945},
+        {40.607973, -8.627285},
+        {40.622814, -8.640426},
+        {40.606837, -8.628787},
+        {40.637649, -8.618011},
+        {40.633883, -8.608838},
+        {40.628412, -8.606859},
+        {40.619797, -8.608511},
+        {40.628216, -8.617392},
+        {40.624584, -8.628796},
+        {40.623402, -8.623879},
+        {40.615590, -8.628901},
+        {40.612623, -8.616170},
+        {40.613307, -8.623369},
+        {40.600206, -8.600228},
+        {40.605274, -8.595435},
+        {40.602856, -8.603787},
+        {40.599854, -8.600715},
+        {40.603839, -8.602905},
+        {40.577787, -8.578555},
+        {40.576442, -8.576356},
+        {40.576238, -8.580648},
+        {40.572755, -8.573448},
+        {40.569960, -8.567665},
+        {40.624765, -8.564652},
+        {40.629211, -8.570452},
+        {40.622241, -8.549117},
+        {40.622245, -8.566591},
+        {40.616955, -8.565777},
+        {40.649415, -8.623272},
+        {40.648634, -8.614002},
+        {40.649687, -8.629945},
+        {40.647815, -8.631747},
+        {40.655780, -8.614240},
+        {40.665585, -8.612773},
+        {40.701724, -8.620130},
+        {40.693423, -8.593055},
+        {40.680955, -8.582951},
+        {40.685136, -8.589633},
+        {40.666293, -8.743672},
+        {40.675970, -8.720291},
+        {40.694182, -8.732699},
+        {40.656854, -8.741412},
+        {40.664041, -8.729213},
+      };
+    
+    private HashMap<Double[], String> coordsMap = new HashMap<>();
     private int index = 0;
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 1000 / 40)
     public void reportCurrentTime() {
 
+        if(!coordsMap.containsKey(coords[index])) {
+            coordsMap.put(coords[index], UUID.randomUUID().toString());
+        }
+
         Location location = new Location("Point", coords[index][0], coords[index][1]);
-        sendKafkaMessage("entity", simulator.simulate(UUID.randomUUID().toString(), location));
+        sendKafkaMessage("value", simulator.simulate(coordsMap.get(coords[index]), location));
 
         index = (index + 1) % coords.length;
 
     }
 
-    public void sendKafkaMessage(String topic, Entity entity) {
-        ListenableFuture<SendResult<String, Entity>> future = kafkaTemplate.send(topic, entity);
-
-        future.addCallback(new ListenableFutureCallback<SendResult<String, Entity>>() {
+    public void sendKafkaMessage(String topic, Value entity) {
+        ListenableFuture<SendResult<String, Value>> future = kafkaTemplate.send(topic, entity);
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Value>>() {
             @Override
             public void onFailure(Throwable ex) {
                 logger.info("Unable to send message = [" + entity.toString() + "] due to : " + ex.getMessage());
             }
-
             @Override
-            public void onSuccess(SendResult<String, Entity> result) {
+            public void onSuccess(SendResult<String, Value> result) {
                 logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });

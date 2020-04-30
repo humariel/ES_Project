@@ -39,13 +39,15 @@ public class AppController {
 
     }
     
-    @KafkaListener(topics = "entity", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
-    private void listener(Entity entity){
-        Parish targetParish = parishRepo.findParishContainingEntity(entity.getLocation().getCoords());
-        entity.setParish(targetParish.getId());
-        System.out.println("Receiving entity " + entity);
-        entityRepo.save(entity);
-        this.template.convertAndSend("/topic/entity", entity);
+    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "values_consumers")
+    private void listener(Value value){
+        Parish targetParish = parishRepo.findParishContainingEntity(value.getLocation().getCoords());
+        value.setParish(targetParish.getId());
+        value.setEntity(value.getId());
+        value.setId(null);
+        value = entityRepo.save(value);
+        System.out.println("Receiving value " + value);
+        this.template.convertAndSend("/topic/value", value);
     }
     
 }

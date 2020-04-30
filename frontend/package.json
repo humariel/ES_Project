@@ -13,6 +13,8 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.9.7",
     "@nuxtjs/eslint-module": "^1.1.0",
+    "chart.js": "^2.9.3",
+    "hchs-vue-charts": "^1.2.8",
     "net": "^1.0.2",
     "nuxt": "^2.0.0",
     "nuxt-leaflet": "0.0.21",

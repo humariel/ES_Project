@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Objects;
+
 public class Location {
 
     private String type;
@@ -36,11 +38,29 @@ public class Location {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Location)) {
+            return false;
+        }
+        Location location = (Location) o;
+        return Objects.equals(type, location.type) && Objects.equals(coords, location.coords);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, coords);
+    }
+
+    @Override
     public String toString() {
         return "{" +
             " type='" + getType() + "'" +
-            ", coordinates='" + getCoords() + 
+            ", coordinates=[" + getCoords()[0] + ", " + getCoords()[1] +"]" + 
             "}";
     }
+
+
 
 }

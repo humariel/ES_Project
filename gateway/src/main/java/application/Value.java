@@ -2,22 +2,18 @@ package application;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+public class Value {
 
-@Document
-public class Entity {
-
-    @Id
+    //metadata
     private String id;
-    private String parish;
-    private long timestamp;
     private Location location;
-    
+    private long timestamp;
+    //weather related
     private double temperature;
     private double humidity;
     private double pressure;
     private int precipIntensity;
+    //pollution focused
     private double o3;
     private double co;
     private double no2;
@@ -25,13 +21,12 @@ public class Entity {
     private double pm25;
     private double so2;
 
-    public Entity() {
+    public Value() {
         this.timestamp = (new Date()).getTime();
     }
 
-    public Entity(String id, String Parish, Location location, double temperature, double humidity, double pressure, int precipIntensity, double o3, double co, double no2, double pm10, double pm25, double so2) {
+    public Value(String id, Location location, double temperature, double humidity, double pressure, int precipIntensity, double o3, double co, double no2, double pm10, double pm25, double so2) {
         this.id = id;
-        this.parish = Parish;
         this.temperature = temperature;
         this.humidity = humidity;
         this.pressure = pressure;
@@ -52,14 +47,6 @@ public class Entity {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getParish() {
-        return this.parish;
-    }
-
-    public void setParish(String parish) {
-        this.parish = parish;
     }
 
     public Location getLocation() {
@@ -161,8 +148,7 @@ public class Entity {
     @Override
     public String toString() {
         return "{" +
-            " id='" + getId() + "'" +
-            " parish='" + getParish() + "'" +
+            " id='" + getId() + "'" + 
             " location='" + getLocation() + "'" +
             ", timestamp='" + getTimestamp() + "'" +
             ", temperature='" + getTemperature() + "'" +
