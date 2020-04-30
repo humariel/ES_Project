@@ -34,16 +34,18 @@ public class AppController {
 
         ObjectMapper objectMapper = new ObjectMapper();
         Parish[] parishes = objectMapper.readValue(new File("aveiro.json"), Parish[].class);
-        for(Parish parish : parishes) {
+        for(Parish parish : parishes)
             parishRepo.save(parish);
-        }
+
     }
     
     @KafkaListener(topics = "entity", containerFactory="kafkaListenerContainerFactory", groupId = "entities_consumers")
-    private void darksky_listener(Entity entity){
-        log.info("Received message at topic entity: " + entity);
+    private void listener(Entity entity){
+        Parish targetParish = parishRepo.findParishContainingEntity(entity.getLocation().getCoords());
+        entity.setParish(targetParish.getId());
+        System.out.println("Receiving entity " + entity);
         entityRepo.save(entity);
-        this.template.convertAndSend("/topic/darksky", entity);
+        this.template.convertAndSend("/topic/entity", entity);
     }
     
 }

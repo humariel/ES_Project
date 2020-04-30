@@ -25,26 +25,21 @@ public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final RestTemplate restTemplate = new RestTemplate();
 
+    private final Simulator simulator = new Simulator();
+
     @Autowired
     private KafkaTemplate<String, Entity> kafkaTemplate;
 
     private Double[][] coords = new Double[][]{
-        { 40.628883, -8.6590908 },
-        { 40.2, -8.2 },
-        { 41.2, -8.0 },
-        { 40.0, -8.9 },
-        { 40.5, -8.1 },
-        { 40.1, -9.0 },
-        { 41.1, -8.3 },
-        { 40.4, -8.9 },
-        { 40.7, -8.4 }
+        { 40.633084, -8.660537 },
     };
     private int index = 0;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void reportCurrentTime() {
 
-        sendKafkaMessage("entity", Simulator.simulate(UUID.randomUUID().toString(), coords[index][0], coords[index][1]));
+        Location location = new Location("Point", coords[index][0], coords[index][1]);
+        sendKafkaMessage("entity", simulator.simulate(UUID.randomUUID().toString(), location));
 
         index = (index + 1) % coords.length;
 

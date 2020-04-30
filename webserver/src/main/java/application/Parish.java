@@ -1,6 +1,8 @@
 package application;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -9,6 +11,8 @@ public class Parish {
     @Id
     private String id;
     private String name;
+
+    @GeoSpatialIndexed(type=GeoSpatialIndexType.GEO_2DSPHERE)
     private Geometry geometry;
 
     public Parish() {

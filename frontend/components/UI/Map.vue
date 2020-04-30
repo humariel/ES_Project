@@ -1,6 +1,6 @@
 <template>
   <div id="map-wrap" style="height: 100vh">
-    <l-map :zoom=13 :center="[40.627343, -8.654386]">
+    <l-map :zoom=13 :center="{40.627343, -8.654386]">
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
       <l-geo-json :geojson="geojson"></l-geo-json>
       <!-- GLORIA E VERA CRUZ -->
@@ -91,4 +91,3 @@ export default {
   }
 }
 </script>
-
