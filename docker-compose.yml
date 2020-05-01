@@ -69,11 +69,11 @@ services:
             - gateway
             - mongo
 
-    # frontend:
-    #     restart: always
-    #     build: ./frontend
-    #     ports:
-    #     - 3000:3000
-    #     container_name: nuxt
+    frontend:
+        restart: always
+        build: ./frontend
+        ports:
+        - 3000:3000
+        container_name: nuxt
 
 
