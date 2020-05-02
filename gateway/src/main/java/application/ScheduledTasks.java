@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +27,9 @@ public class ScheduledTasks {
 
     @Autowired
     private KafkaTemplate<String, Value> kafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, Map<String,Object>> kafkaTemplateMap;
 
     private final Double[][] coords = new Double[][]{
         {40.633084, -8.660537},
@@ -97,6 +101,26 @@ public class ScheduledTasks {
             sendKafkaMessage("value", v);
         }
 
+    }
+
+    @Scheduled(fixedRate = 60000, initialDelay = 0)
+    public void checkAlarms() {
+
+
+    }
+
+    public void sendKafkaMessageMap(String topic, Map<String,Object>  entity) {
+        ListenableFuture<SendResult<String, Map<String,Object> >> future = kafkaTemplateMap.send(topic, entity);
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Map<String,Object> >>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                logger.info("Unable to send message = [" + entity.toString()+ "] due to : " + ex.getMessage());
+            }
+            @Override
+            public void onSuccess(SendResult<String, Map<String,Object> > result) {
+                logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString()+ "] with offset=[" + result.getRecordMetadata().offset() + "]");
+            }
+        });
     }
 
     public void sendKafkaMessage(String topic, Value entity) {

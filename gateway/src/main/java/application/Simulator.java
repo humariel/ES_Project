@@ -111,70 +111,70 @@ public class Simulator {
     }
 
     private double nextTemperature(double std, double mean) {
-        this.TEMPERATURE += random.nextGaussian();
+        this.TEMPERATURE += random.nextGaussian()*0.1;
         if(this.TEMPERATURE < 0) this.TEMPERATURE = 0;
         else if(this.TEMPERATURE > mean + std) this.TEMPERATURE = mean + std;
         return this.TEMPERATURE;
     }
 
     private double nextHumidity(double std, double mean) {
-        this.HUMIDITY += random.nextGaussian();
+        this.HUMIDITY += random.nextGaussian()*0.1;
         if(this.HUMIDITY < 0) this.HUMIDITY = 0;
         else if(this.HUMIDITY >  mean + std) this.HUMIDITY = mean + std;
         return this.HUMIDITY;
     }
 
     private double nextPressure(double std, double mean) {
-        this.PRESSURE += random.nextGaussian();
+        this.PRESSURE += random.nextGaussian()*0.1;
         if(this.PRESSURE < 0) this.PRESSURE = 0;
         else if(this.PRESSURE > mean + std) this.PRESSURE = mean + std;
         return this.PRESSURE;
     }
 
     private double nextPrecipitation(double std, double mean) {
-        this.PRECIPITATION += random.nextGaussian();
+        this.PRECIPITATION += random.nextGaussian()*0.1;
         if(this.PRECIPITATION < 0) this.PRECIPITATION = 0;
         else if(this.PRECIPITATION > mean + std) this.PRECIPITATION = mean + std;
         return this.PRECIPITATION;
     }
 
     private double nextO3(double std, double mean) {
-        this.O3 += random.nextGaussian();
+        this.O3 += random.nextGaussian()*0.1;
         if(this.O3 < 0) this.O3 = 0;
         else if(this.O3 > mean + std) this.O3 = mean + std;
         return this.O3;
     }
 
     private double nextCo(double std, double mean) {
-        this.CO += random.nextGaussian();
+        this.CO += random.nextGaussian()*0.1;
         if(this.CO < 0) this.CO = 0;
         else if(this.CO > mean + std) this.CO = mean + std;
         return this.CO;
     }
 
     private double nextNo2(double std, double mean) {
-        this.NO2 += random.nextGaussian();
+        this.NO2 += random.nextGaussian()*0.1;
         if(this.NO2 < 0) this.NO2 = 0;
         else if(this.NO2 > mean + std) this.NO2 = mean + std;
         return this.NO2;
     }
 
     private double nextPm10(double std, double mean) {
-        this.PM10 += random.nextGaussian();
+        this.PM10 += random.nextGaussian()*0.1;
         if(this.PM10 < 0) this.PM10 = 0;
         else if(this.PM10 > mean + std) this.PM10 = mean + std;
         return this.PM10;
     }
 
     private double nextPm25(double std, double mean) {
-        this.PM25 += random.nextGaussian();
+        this.PM25 += random.nextGaussian()*0.1;
         if(this.PM25 < 0) this.PM25 = 0;
         else if(this.PM25 > mean + std) this.PM25 = mean + std;
         return this.PM25;
     }
 
     private double nextSo2(double std, double mean) {
-        this.SO2 += random.nextGaussian();
+        this.SO2 += random.nextGaussian()*0.1;
         if(this.SO2 < 0) this.SO2 = 0;
         else if(this.SO2 > mean + std) this.SO2 = mean + std;
         return this.SO2;
