@@ -71,8 +71,8 @@ pipeline {
             steps {
                 dir('gateway') {
                     sh '''
-                        docker stop esp31-gateway
-                        docker rm esp31-gateway
+                        docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop
+                        docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm
                         docker pull 192.168.160.99:5000/esp31-gateway
                         docker run -p 3181:8081 192.168.160.99:5000/esp31-gateway
                     '''
@@ -83,8 +83,8 @@ pipeline {
             steps {
                 dir('webserver') {
                     sh '''
-                        docker stop esp31-webserver
-                        docker rm esp31-webserver
+                        docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container stop
+                        docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container rm
                         docker pull 192.168.160.99:5000/esp31-webserver
                         docker run -p 3180:8080 192.168.160.99:5000/esp31-webserver
                     '''
@@ -95,8 +95,8 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        docker stop esp31-frontend
-                        docker rm esp31-frontend
+                        docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container stop
+                        docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container rm
                         docker pull 192.168.160.99:5000/esp31-frontend
                         docker run -p 3100:3000 192.168.160.99:5000/esp31-frontend
                     '''
