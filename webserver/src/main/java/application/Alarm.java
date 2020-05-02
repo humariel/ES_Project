@@ -1,4 +1,4 @@
-package application.data;
+package application;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,14 +8,17 @@ public class Alarm {
 
     @Id
     private String id;
+    private String parish;
     private int time;
     private AlarmCondition[] conditions;
+
 
     public Alarm() {
     }
 
-    public Alarm(String id, int time, AlarmCondition[] conditions) {
+    public Alarm(String id, String parish, int time, AlarmCondition[] conditions) {
         this.id = id;
+        this.parish = parish;
         this.time = time;
         this.conditions = conditions;
     }
@@ -26,6 +29,14 @@ public class Alarm {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getParish() {
+        return this.parish;
+    }
+
+    public void setParish(String parish) {
+        this.parish = parish;
     }
 
     public int getTime() {
@@ -48,10 +59,10 @@ public class Alarm {
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
+            ", parish='" + getParish() + "'" +
             ", time='" + getTime() + "'" +
             ", conditions='" + getConditions() + "'" +
             "}";
-    }
-
+    }    
     
 }

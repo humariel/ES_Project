@@ -16,19 +16,19 @@
 <script>
 export default {
   props: {
-    values: Array,
-    label: String
+    series: Array,
+    title: String,
   },
-  computed: {
-    series() {
-      return [
-          {
-            name: this.label.slice(0, 1).toUpperCase() + this.label.slice(1),
-            data: this.values.map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
-          }
-      ]
-    },
-  },
+  // computed: {
+  //   series() {
+  //     return [
+  //         {
+  //           name: this.label.slice(0, 1).toUpperCase() + this.label.slice(1),
+  //           data: this.values.map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+  //         }
+  //     ]
+  //   },
+  // },
   data() {
     return {
       chartOptions: {
@@ -57,7 +57,7 @@ export default {
           curve: "smooth"
         },
         title: {
-          text: this.label.slice(0, 1).toUpperCase() + this.label.slice(1),
+          text: this.title.slice(0, 1).toUpperCase() + this.title.slice(1),
           align: "left"
         },
         markers: {

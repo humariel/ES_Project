@@ -1,6 +1,6 @@
-package application.mongo;
+package application;
 
-import application.data.Parish;
+import application.Parish;
 
 interface CustomParishRepository {
 

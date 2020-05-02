@@ -1,8 +1,8 @@
-package application.mongo;
+package application;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import application.data.Parish;
+import application.Parish;
 
 public interface ParishRepository extends MongoRepository<Parish, String>, CustomParishRepository {
 
