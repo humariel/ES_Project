@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -46,8 +47,13 @@ public class AppController {
         value.setEntity(value.getId());
         value.setId(null);
         value = entityRepo.save(value);
-        System.out.println("Receiving value " + value);
+        //System.out.println("Receiving value " + value);
         this.template.convertAndSend("/topic/value", value);
+    }
+
+    @KafkaListener(topics = "alert", containerFactory="kafkaListenerContainerFactory", groupId = "alert_consumers")
+    private void listener(Map<String,Object> alert){
+        System.out.println("Receiving alert " + alert);
     }
     
 }
