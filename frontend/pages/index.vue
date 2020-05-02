@@ -3,10 +3,10 @@
   <div class="map">
     <l-map :class="{margin: selectedEntity ? selectedEntity.id : null}" class="map--map" :zoom=13 :center="[40.627343, -8.654386]">
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-      <l-geo-json 
+      <!-- <l-geo-json 
       :options="mapOptions"
-      :geojson="geojson" />
-      <l-marker @click="selectedEntity = {type: 'sensor', id: entity.id, parish:entity.parish.properties.Freguesia}" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
+      :geojson="geojson" /> -->
+      <l-marker @click="selectedEntity = {type: 'sensor', id: entity.id, parish: entity.parish.properties.Freguesia}" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
         <l-tooltip>
           <div><span>ID: </span>{{entity.id}}</div>
           <div><span>Location: </span>{{entity.location}}</div>
@@ -16,17 +16,24 @@
           </div>
         </l-tooltip>
       </l-marker>
+      <l-polygon @click="onParishClick(parish)" v-for="parish in geojson.features" :key="parish.properties.id" :lat-lngs="[parish.geometry.coordinates[0].map(a => [a[1], a[0]])]" :color="'blue'" :fillColor="'#000000aa'">
+      </l-polygon>
     </l-map>
     <transition mode="out-in" name="translate-fade">
-      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity && selectedEntity.type=='sensor'">
-        <div>{{selectedEntity.id}} ({{selectedEntity.parish}})</div>
-        <div>Last 100 values</div>
-        <Chart v-for="key of keys.slice(0, 3)" :title="key" :key="key" :series="seriesSensor(key,values[selectedEntity.id][key])"/>
-      </div>
-      <div class="map__sidebar" v-if="selectedEntity && selectedEntity.type=='parish'">
-        <div>{{selectedEntity.parish}}</div>
-        <div>Last 100 values from all sensors in the parish</div>
-        <Chart :title="selectedEntity.id" :series="seriesParish()"/>
+      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity">
+        <template v-if="selectedEntity.type == 'sensor'">
+          <div>{{selectedEntity.id}} ({{selectedEntity.parish}})</div>
+          <div>Last 100 values</div>
+          <Chart v-for="key of keys" :title="key" :key="key" :series="[{
+            name: key.slice(0, 1).toUpperCase() + key.slice(1),
+            data: values[selectedEntity.id][key].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+          }]"/>
+        </template>
+        <template v-else>
+          <div>{{selectedEntity.parish}}</div>
+          <div>Last 100 values from all sensors in the parish</div>
+          <!-- <Chart :title="selectedEntity.id" :series="seriesParish()"/> -->
+        </template>
       </div>
     </transition>
   </div>
@@ -50,7 +57,7 @@ export default {
           return {
             weight: 2,
             opacity: 1,
-            color: '#7fa7e6',
+            color: 'red',
             fillOpacity: 0.3
           };
         },   
@@ -101,7 +108,7 @@ export default {
             label: value.timestamp,
             value: value[key]
           })
-          if(this.values[value.entity][key].length > 100) 
+          if(this.values[value.entity][key].length > 50) 
             this.values[value.entity][key] = this.values[value.entity][key].slice(1);
         }
         
@@ -111,8 +118,15 @@ export default {
 
   },
   methods:{
-    onEachFeature(feature, layer) {
-      layer.on('click', () => {
+    onParishClick(parish) {
+      this.selectedEntity = {
+        type: 'parish', 
+        id: parish.properties.id, 
+        parish: parish.properties.Freguesia
+      }
+    },
+    /* onEachFeature(feature, layer) {
+      layer.on('click', (event) => {
         let parishInfo = this.geojson.features.filter(x => x.properties.Freguesia == feature.properties.Freguesia)[0]
         this.selectedEntity = {
           type: 'parish',
@@ -120,7 +134,7 @@ export default {
           parish: parishInfo.properties.Freguesia
         }
       });
-    },
+    }, */
     getParishSensors(parishId){
       return this.entities.filter(x => x.parish.properties.id == parishId)
     },
@@ -137,13 +151,10 @@ export default {
         return series
     },
     seriesSensor(label,values){
-      return [{
-        name: label.slice(0, 1).toUpperCase() + label.slice(1),
-        data: values.map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
-      }]
+      return []
     },
     getParish(parishId){
-      return this.geojson.features.filter(x => x.properties.id == parishId)[0]
+      return this.geojson.features.find(x => x.properties.id == parishId)
     },
   },
   computed: {

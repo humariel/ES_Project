@@ -98,14 +98,14 @@ public class Simulator {
         entity.setTemperature(nextTemperature(this.TEMPERATURE_STD, this.TEMPERATURE_AVG));
         entity.setHumidity(nextHumidity(this.HUMIDITY_STD, this.HUMIDITY_AVG));
         entity.setPressure(nextPressure(this.PRESSURE_STD, this.PRESSURE_AVG));
-        entity.setPrecipIntensity((int) nextPrecipitation(this.PRECIPITATION_STD, this.PRECIPITATION_AVG));
+        /* entity.setPrecipIntensity((int) nextPrecipitation(this.PRECIPITATION_STD, this.PRECIPITATION_AVG));
 
         entity.setO3(nextO3(this.O3_STD, this.O3_AVG));
         entity.setCo(nextCo(this.CO_STD, this.CO_AVG));
-        entity.setNo2(nextNo2(this.NO2_STD, this.NO2_AVG));
+        entity.setNo2(nextNo2(this.NO2_STD, this.NO2_AVG)); */
         entity.setPm10(nextPm10(this.PM10_STD, this.PM10_AVG));
-        entity.setPm25(nextPm25(this.PM25_STD, this.PM25_AVG));
-        entity.setSo2(nextSo2(this.SO2_STD, this.SO2_AVG));
+        /* entity.setPm25(nextPm25(this.PM25_STD, this.PM25_AVG));
+        entity.setSo2(nextSo2(this.SO2_STD, this.SO2_AVG)); */
 
         return entity;
     }

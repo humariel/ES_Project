@@ -52,7 +52,6 @@ public class AppController {
     public Alarm postMethodName(@RequestBody Alarm alarm) throws Exception {
         Alarm newAlarm = alarmRepo.save(alarm);
         System.out.println(newAlarm);
-        
         return newAlarm;
     }
 

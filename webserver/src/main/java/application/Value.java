@@ -18,34 +18,23 @@ public class Value {
     private double temperature;
     private double humidity;
     private double pressure;
-    private int precipIntensity;
-    private double o3;
-    private double co;
-    private double no2;
     private double pm10;
-    private double pm25;
-    private double so2;
+
 
     public Value() {
         this.timestamp = (new Date()).getTime();
     }
 
-    public Value(String id, String entity, String Parish, Location location, double temperature, double humidity, double pressure, int precipIntensity, double o3, double co, double no2, double pm10, double pm25, double so2) {
+    public Value(String id, String entity, String parish, long timestamp, Location location, double temperature, double humidity, double pressure, double pm10) {
         this.id = id;
         this.entity = entity;
-        this.parish = Parish;
+        this.parish = parish;
+        this.timestamp = timestamp;
+        this.location = location;
         this.temperature = temperature;
         this.humidity = humidity;
         this.pressure = pressure;
-        this.precipIntensity = precipIntensity;
-        this.o3 = o3;
-        this.co = co;
-        this.no2 = no2;
         this.pm10 = pm10;
-        this.pm25 = pm25;
-        this.so2 = so2;
-
-        this.timestamp = (new Date()).getTime();
     }
 
     public String getId() {
@@ -72,20 +61,20 @@ public class Value {
         this.parish = parish;
     }
 
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public long getTimestamp() {
         return this.timestamp;
     }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Location getLocation() {
+        return this.location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public double getTemperature() {
@@ -112,38 +101,6 @@ public class Value {
         this.pressure = pressure;
     }
 
-    public int getPrecipIntensity() {
-        return this.precipIntensity;
-    }
-
-    public void setPrecipIntensity(int precipIntensity) {
-        this.precipIntensity = precipIntensity;
-    }
-
-    public double getO3() {
-        return this.o3;
-    }
-
-    public void setO3(double o3) {
-        this.o3 = o3;
-    }
-
-    public double getCo() {
-        return this.co;
-    }
-
-    public void setCo(double co) {
-        this.co = co;
-    }
-
-    public double getNo2() {
-        return this.no2;
-    }
-
-    public void setNo2(double no2) {
-        this.no2 = no2;
-    }
-
     public double getPm10() {
         return this.pm10;
     }
@@ -152,40 +109,20 @@ public class Value {
         this.pm10 = pm10;
     }
 
-    public double getPm25() {
-        return this.pm25;
-    }
-
-    public void setPm25(double pm25) {
-        this.pm25 = pm25;
-    }
-
-    public double getSo2() {
-        return this.so2;
-    }
-
-    public void setSo2(double so2) {
-        this.so2 = so2;
-    }
-
     @Override
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
-            " parish='" + getParish() + "'" +
-            " location='" + getLocation() + "'" +
+            ", entity='" + getEntity() + "'" +
+            ", parish='" + getParish() + "'" +
             ", timestamp='" + getTimestamp() + "'" +
+            ", location='" + getLocation() + "'" +
             ", temperature='" + getTemperature() + "'" +
             ", humidity='" + getHumidity() + "'" +
             ", pressure='" + getPressure() + "'" +
-            ", precipIntensity='" + getPrecipIntensity() + "'" +
-            ", o3='" + getO3() + "'" +
-            ", co='" + getCo() + "'" +
-            ", no2='" + getNo2() + "'" +
             ", pm10='" + getPm10() + "'" +
-            ", pm25='" + getPm25() + "'" +
-            ", so2='" + getSo2() + "'" +
             "}";
     }
+
 
 }
