@@ -1,4 +1,4 @@
-package application;
+package application.mongo;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
+import application.data.Parish;
 
 @Repository
 public class CustomParishRepositoryImpl implements CustomParishRepository {

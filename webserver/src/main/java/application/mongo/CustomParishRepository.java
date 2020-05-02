@@ -1,4 +1,6 @@
-package application;
+package application.mongo;
+
+import application.data.Parish;
 
 interface CustomParishRepository {
 
