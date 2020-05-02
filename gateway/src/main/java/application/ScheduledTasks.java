@@ -15,14 +15,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
 
 @Component
 public class ScheduledTasks {
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-
-    private final Simulator simulator = new Simulator();
 
     @Autowired
     private KafkaTemplate<String, Value> kafkaTemplate;
@@ -79,21 +79,23 @@ public class ScheduledTasks {
         {40.656854, -8.741412},
         {40.664041, -8.729213},
       };
-    
-    private HashMap<Double[], String> coordsMap = new HashMap<>();
-    private int index = 0;
+    private HashMap<Double[], Simulator> simsMap = new HashMap<>();
 
-    @Scheduled(fixedRate = 1000 / 40)
+    @PostConstruct
+    public void init() {
+        for(int i = 0; i<coords.length; i++) {
+            String id = UUID.randomUUID().toString();
+            simsMap.put(coords[i], new Simulator(id, new Location("Point", coords[i][0], coords[i][1])));
+        }
+    }
+
+    @Scheduled(fixedRate = 1000)
     public void reportCurrentTime() {
 
-        if(!coordsMap.containsKey(coords[index])) {
-            coordsMap.put(coords[index], UUID.randomUUID().toString());
+        for(int i = 0; i<coords.length; i++) {
+            Value v = simsMap.get(coords[i]).simulate();
+            sendKafkaMessage("value", v);
         }
-
-        Location location = new Location("Point", coords[index][0], coords[index][1]);
-        sendKafkaMessage("value", simulator.simulate(coordsMap.get(coords[index]), location));
-
-        index = (index + 1) % coords.length;
 
     }
 
