@@ -69,7 +69,7 @@ pipeline {
         }
         stage('Deploy Gateway') {
             steps {
-                sshagent(credentials: ['esp31-ssh-deploy']){
+                sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway"
@@ -79,7 +79,7 @@ pipeline {
         }
         stage('Deploy Webserver') {
             steps {
-                sshagent(credentials: ['esp31-ssh-deploy']){
+                sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container stop"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container rm"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-webserver"
@@ -89,7 +89,7 @@ pipeline {
         }
         stage('Deploy Frontend') {
             steps {
-                sshagent(credentials: ['esp31-ssh-deploy']){
+                sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container stop"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container rm"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-frontend"
