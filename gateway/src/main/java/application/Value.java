@@ -1,6 +1,8 @@
 package application;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Value {
 
@@ -143,6 +145,36 @@ public class Value {
 
     public void setSo2(double so2) {
         this.so2 = so2;
+    }
+
+    public Map<String,Object> verifyDanger(){
+        Map<String,Object> values = new HashMap<>();
+        values.put("id", this.id);
+        values.put("location", this.location);
+        values.put("timestamp", this.timestamp);
+
+        if (this.temperature > 43)
+            values.put("temperature",this.temperature);
+
+        if (this.o3 > 43)
+            values.put("o3",this.o3);
+
+        if (this.co > 230)
+            values.put("co",this.co);
+
+        if (this.no2 > 27)
+            values.put("no2",this.no2);
+
+        if (this.pm10 > 27)
+            values.put("pm10",this.pm10);
+
+        if (this.pm25 > 27)
+            values.put("pm25",this.pm25);
+
+        if (this.so2 > 6)
+            values.put("so2",this.so2);
+
+        return values;
     }
 
     @Override
