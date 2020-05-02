@@ -93,17 +93,19 @@ public class ScheduledTasks {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void reportCurrentTime() {
 
         for(int i = 0; i<coords.length; i++) {
             Value v = simsMap.get(coords[i]).simulate();
             sendKafkaMessage("value", v);
-            Map<String,Object> m = v.verifyDanger();
-            if(m.size() > 3){
-                sendKafkaMessageMap("alert", m);
-            }
         }
+
+    }
+
+    @Scheduled(fixedRate = 60000, initialDelay = 0)
+    public void checkAlarms() {
+
 
     }
 

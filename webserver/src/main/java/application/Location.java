@@ -1,4 +1,4 @@
-package application.data;
+package application;
 
 import java.util.Objects;
 

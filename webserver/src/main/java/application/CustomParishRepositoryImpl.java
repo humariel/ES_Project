@@ -1,6 +1,4 @@
-package application.mongo;
-
-import java.util.List;
+package application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
@@ -10,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import application.data.Parish;
+import application.Parish;
 
 @Repository
 public class CustomParishRepositoryImpl implements CustomParishRepository {

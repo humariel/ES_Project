@@ -1,8 +1,8 @@
-package application.mongo;
+package application;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import application.data.Alarm;
+import application.Alarm;
 
 public interface AlarmRepository extends MongoRepository<Alarm, String> {
 
