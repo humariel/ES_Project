@@ -74,6 +74,7 @@ pipeline {
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 31081:8081 192.168.160.99:5000/esp31-gateway"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 31017:27017 192.168.160.99:5000/mongo"
                 }
             }
         }
