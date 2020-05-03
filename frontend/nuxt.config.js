@@ -23,12 +23,14 @@ export default {
   ** Global CSS
   */
   css: [
+    'bootstrap-vue/dist/bootstrap-vue.css',
+    'bootstrap/dist/css/bootstrap.css',
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~plugins/chartjs.js', ssr: false }
+    { src: '~plugins/plugins.js', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules

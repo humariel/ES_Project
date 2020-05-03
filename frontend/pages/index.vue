@@ -18,19 +18,28 @@
     </l-map>
     <transition mode="out-in" name="translate-fade">
       <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity">
-        <template v-if="selectedEntity.type == 'sensor'">
-          <div>{{selectedEntity.id}} ({{selectedEntity.parish}})</div>
-          <div>Last 100 values</div>
-          <Chart v-for="key of keys" :title="key" :key="key" :series="[{
-            name: key.slice(0, 1).toUpperCase() + key.slice(1),
-            data: values[selectedEntity.id][key].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
-          }]"/>
-        </template>
-        <template v-else>
-          <div>{{selectedEntity.parish}}</div>
-          <div>Last 100 values from all sensors in the parish</div>
-          <Chart :title="selectedEntity.id" :series="seriesParish()"/>
-        </template>
+        <div class="sidebar-content">
+          <template v-if="selectedEntity.type == 'sensor'">
+            <h5>SENSOR ID</h5>
+            <div>{{selectedEntity.id}}</div>
+            <h5>PARISH</h5>
+            <div>{{selectedEntity.parish}}</div>
+            <h5>LAST 50 VALUES</h5>
+            <Chart v-for="key of keys" :title="key" :key="key" :series="[{
+              name: key.slice(0, 1).toUpperCase() + key.slice(1),
+              data: values[selectedEntity.id][key].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+            }]"/>
+          </template>
+          <template v-else>
+            <h5>PARISH NAME</h5>
+            <div>{{selectedEntity.parish}}</div>
+            <h5>PARISH ID</h5>
+            <div>{{selectedEntity.id}}</div>
+            <AlertForm :verticals="keys"/>
+            <h5>LAST 50 VALUES FROM ALL SENSORS IN THE PARISH</h5>
+            <Chart :title="selectedEntity.id" :series="seriesParish()"/>
+          </template>
+        </div>
       </div>
     </transition>
   </div>
@@ -42,10 +51,12 @@ import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import axios from 'axios'
 import Chart from '@/components/UI/Chart'
+import AlertForm from '@/components/UI/AlertForm'
 
 export default {
   components: {
-    Chart
+    Chart,
+    AlertForm
   },
   data() {
     return {
@@ -62,7 +73,8 @@ export default {
       },
       entities: [],
       selectedEntity: null,
-      values: {}
+      values: {},
+      form: []
     }
   },
   async asyncData() {
@@ -170,10 +182,31 @@ export default {
 
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+h5{
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: rgb(150, 150, 150);
+    font-size: 13px;
+}
+
+body{
+  font-family: 'Montserrat';
+}
+</style>
+
 <style lang="scss" scoped>
 
 body {
   box-sizing: border-box;
+}
+
+.sidebar-content{
+  margin-top: 30px;
+  margin-left: 30px;
+  width: 25rem;
 }
 
 .map {
@@ -198,6 +231,7 @@ body {
     height: 100%;
     max-height: 100%;
     overflow: auto;
+
     width: 30rem;
     background-color: white;
     z-index: 2;
