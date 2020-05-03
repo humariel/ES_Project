@@ -37,7 +37,7 @@
             <div>{{selectedEntity.id}}</div>
             <AlertForm :verticals="keys"/>
             <h5>LAST 50 VALUES FROM ALL SENSORS IN THE PARISH</h5>
-            <Chart :title="selectedEntity.id" :series="seriesParish()"/>
+            <Chart v-for="vert in keys" :key="vert" :title="vert" :series="seriesParish(vert)" />
           </template>
         </div>
       </div>
@@ -155,13 +155,13 @@ export default {
     getParishSensors(parishId){
       return this.entities.filter(x => x.parish.properties.id == parishId)
     },
-    seriesParish(){
+    seriesParish(vert){
         let series = []
         let sensors = this.getParishSensors(this.selectedEntity.id)
         for(let s in sensors){
             series.push({
               name: sensors[s].id,
-              data: this.values[sensors[s].id]['temperature'].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+              data: this.values[sensors[s].id][vert].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
             })
         }
         return series
