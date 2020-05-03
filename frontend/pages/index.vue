@@ -1,11 +1,8 @@
 
 <template>
   <div class="map">
-    <l-map :class="{margin: selectedEntity ? selectedEntity.id : null}" class="map--map" :zoom=13 :center="[40.627343, -8.654386]">
+    <l-map :class="{margin: selectedEntity ? selectedEntity.id : null}" class="map--map" @click="clickedInsideParish" :zoom=13 :center="[40.627343, -8.654386]">
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-      <!-- <l-geo-json 
-      :options="mapOptions"
-      :geojson="geojson" /> -->
       <l-marker @click="selectedEntity = {type: 'sensor', id: entity.id, parish: entity.parish.properties.Freguesia}" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
         <l-tooltip>
           <div><span>ID: </span>{{entity.id}}</div>
@@ -32,7 +29,7 @@
         <template v-else>
           <div>{{selectedEntity.parish}}</div>
           <div>Last 100 values from all sensors in the parish</div>
-          <!-- <Chart :title="selectedEntity.id" :series="seriesParish()"/> -->
+          <Chart :title="selectedEntity.id" :series="seriesParish()"/>
         </template>
       </div>
     </transition>
@@ -74,7 +71,6 @@ export default {
     }
   },
   async created () {
-    
     const serverUrl = 'http://localhost:8080/breatheasy'
     let ws = new SockJS(serverUrl);
     const stompClient = Stomp.over(ws);
@@ -118,6 +114,25 @@ export default {
 
   },
   methods:{
+    isPointInsidePolygon(point, poly) {
+      var polyPoints = poly;       
+      var x = point.lat, y = point.lng;
+      var inside = false;
+      for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
+          var xi = polyPoints[i][1], yi = polyPoints[i][0];
+          var xj = polyPoints[j][1], yj = polyPoints[j][0];
+
+          var intersect = ((yi > y) != (yj > y))
+              && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+          if (intersect) inside = !inside;
+      }
+      return inside;
+    },
+    clickedInsideParish(event){
+      if(!this.geojson.features.some(cur => this.isPointInsidePolygon(event.latlng,cur.geometry.coordinates[0]))){
+        this.selectedEntity = null
+      }
+    },
     onParishClick(parish) {
       this.selectedEntity = {
         type: 'parish', 
@@ -125,21 +140,10 @@ export default {
         parish: parish.properties.Freguesia
       }
     },
-    /* onEachFeature(feature, layer) {
-      layer.on('click', (event) => {
-        let parishInfo = this.geojson.features.filter(x => x.properties.Freguesia == feature.properties.Freguesia)[0]
-        this.selectedEntity = {
-          type: 'parish',
-          id: parishInfo.properties.id,
-          parish: parishInfo.properties.Freguesia
-        }
-      });
-    }, */
     getParishSensors(parishId){
       return this.entities.filter(x => x.parish.properties.id == parishId)
     },
     seriesParish(){
-        let parish = this.selectedEntity.parish
         let series = []
         let sensors = this.getParishSensors(this.selectedEntity.id)
         for(let s in sensors){
