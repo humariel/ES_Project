@@ -27,9 +27,6 @@ pipeline {
             }
         }
         stage('Build Webserver') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('webserver') {
                     sh 'docker build -t esp31-webserver .'
@@ -37,9 +34,6 @@ pipeline {
             }
         }
         stage('Build Frontend') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('frontend') {
                     sh 'docker build -t esp31-frontend .'
@@ -47,9 +41,6 @@ pipeline {
             }
         }
         stage('Publish Gateway') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('gateway') {
                    sh '''
@@ -60,9 +51,6 @@ pipeline {
             }
         }
         stage('Publish Webserver') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('webserver') {
                    sh '''
@@ -73,9 +61,6 @@ pipeline {
             }
         }
         stage('Publish Frontend') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('frontend') {
                    sh '''
@@ -86,9 +71,6 @@ pipeline {
             }
         }
         stage('Deploy Gateway') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop"
@@ -99,9 +81,6 @@ pipeline {
             }
         }
         stage('Deploy Webserver') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container stop"
@@ -112,9 +91,6 @@ pipeline {
             }
         }
         stage('Deploy Frontend') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container stop"
