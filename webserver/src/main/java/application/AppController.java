@@ -51,10 +51,15 @@ public class AppController {
     }
 
     @PostMapping(value="alarm")
-    public Alarm postMethodName(@RequestBody Alarm alarm) throws Exception {
+    public Alarm postAlarm(@RequestBody Alarm alarm) throws Exception {
         Alarm newAlarm = alarmRepo.save(alarm);
-        System.out.println(newAlarm);
         return newAlarm;
+    }
+
+    @PostMapping(value="value")
+    public Value postValue(@RequestBody Value value) throws Exception {
+        Value newValue = valueRepo.save(value);
+        return value;
     }
 
     @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "values_consumers")
@@ -64,8 +69,14 @@ public class AppController {
         value.setEntity(value.getId());
         value.setId(null);
         value = valueRepo.save(value);
-        System.out.println("Receiving value " + value);
+        //System.out.println("Receiving value " + value);
         template.convertAndSend("/topic/value", value);
+    }
+
+    @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listenTrigger(Trigger trigger) {
+        System.out.println(trigger);
+        template.convertAndSend("/topic/trigger", trigger);
     }
     
 }

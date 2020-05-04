@@ -1,6 +1,6 @@
 <template>
   <b-form @submit="onAlertCreation" @reset="onAlertReset">
-    <h5>FETCHING PERIOD (IN MINUTES)</h5>
+    <h5>FETCHING PERIOD (IN SECONDS)</h5>
     <b-form-group
       id="input-group-1"
       label-for="input-1"
@@ -15,13 +15,13 @@
       ></b-form-input>
     </b-form-group>
 
-    <span style="margin-top: 1rem; display: block" v-if="conditions.length">{{conditions}}</span> 
+    <span style="margin-top: 1rem; display: block" v-if="conditions.length">{{(conditions)}}</span> 
     
     <b-form @submit="$event.stopPropagation(); $event.preventDefault(); conditions.push({
           type,
           operation,
-          value
-        })">
+          threshold: value
+        }); type = null; operation = null; value = ''">
       <div style="display: flex">
 
         <div style="width: 100%; margin-right: 2.5px; margin-bottom: -1rem">
@@ -33,7 +33,11 @@
               :options="verticals"
               placeholder="Choose the type"
               required
-            ></b-form-select>
+            >
+              <template v-slot:first>
+                <b-form-select-option :value="null" disabled>Choose a type</b-form-select-option>
+              </template>
+            </b-form-select>
           </b-form-group>
         </div>
 
@@ -43,10 +47,14 @@
             <b-form-select
               id="input-3"
               v-model="operation"
-              :options="['Higher than', 'Lower than']"
+              :options="[{value: '>', text: 'Higher than'},{value: '<', text: 'Lower than'}]"
               required
               placeholder="Choose the operation"
-            ></b-form-select>
+            >
+              <template v-slot:first>
+                <b-form-select-option :value="null" disabled>Choose the operation</b-form-select-option>
+              </template>
+            </b-form-select>
           </b-form-group>
         </div>
 
@@ -83,7 +91,8 @@
 <script>
 export default {
   props:{
-    verticals: Array
+    verticals: Array,
+    parish: String
   },
   data(){
     return{
@@ -106,6 +115,7 @@ export default {
         method: 'post',
         url: 'http://localhost:8080/alarm',
         data: {
+          parish: this.parish,
           time: this.time,
           conditions: this.conditions
         }

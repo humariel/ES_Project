@@ -73,60 +73,63 @@ public class ScheduledTasks {
 
     }
 
-    @Scheduled(fixedRate = 60000, initialDelay = 0)
+    @Scheduled(fixedRate = 1000, initialDelay = 0)
     public void checkAlarms() {
         List<Alarm> alarmList = alarmRepo.findAll();
+        long timestamp = (new Date()).getTime();
         for (Alarm a : alarmList) {
-            if (time % a.getTime() == 0) {
-                System.out.println("ALARM LIST" + alarmList);
-                long timestamp = (new Date()).getTime();
+            if (time > 0 && time % a.getTime() == 0) {
                 // get values from alarm parish from alarm time frame
-                List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (60 * 1000 * time));
+                List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (1000 * time));
+                logger.info(valueList.get(0).toString());
                 // if alarm conditions are true create, save and send trigger
-                if(verifyAlarmTrigger(a.getConditions(), valueList)){
-                    Trigger trigger = new Trigger(UUID.randomUUID().toString(),a.getId(),timestamp);
+                if(verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
+                    Trigger trigger = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
                     sendKafkaMessageTrigger("trigger", trigger);
-                    //trigger = triggerRepo.save(trigger);
+                    triggerRepo.save(trigger);
                 }
             }
         }
         time++;
     }
 
-    public boolean verifyAlarmTrigger(AlarmCondition[] condList, List<Value> valueList) {
+    public boolean verifyAlarmTrigger(AlarmCondition[] condList, Value parishValues) {
         boolean trigger = false;
 
         for (AlarmCondition a : condList) {
+
             Double avgVal = 0.0;
             switch (a.getType()) {
                 case "temperature":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getTemperature()));
-                    System.out.println("AVG TEMPERATURE: " + avgVal);
+                    avgVal = parishValues.getTemperature();
                     break;
 
                 case "humidity":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getHumidity()));
-                    System.out.println("AVG HUMIDITY: " + avgVal);
+                    avgVal = parishValues.getHumidity();
                     break;
 
                 case "pressure":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getPressure()));
+                    avgVal = parishValues.getPressure();
                     break;
 
                 case "pm10":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getPm10()));
+                    avgVal = parishValues.getPm10();
                     break;
 
                 default:
                     trigger = false;
             }
 
-            if (a.getOperation() == "<") {
-                trigger = avgVal < a.getValue();
+            if (a.getOperation().equals("<")) {
+                trigger = avgVal < a.getThreshold();
             } else {
-                trigger = avgVal > a.getValue();
+                trigger = avgVal > a.getThreshold();
             }
+
+            a.setValue(avgVal);
+
         }
+
         return trigger;
     }
 
@@ -156,7 +159,7 @@ public class ScheduledTasks {
 
             @Override
             public void onSuccess(SendResult<String, Value> result) {
-                logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
+                //logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });
     }
