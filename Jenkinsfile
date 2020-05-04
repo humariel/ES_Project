@@ -17,9 +17,6 @@ pipeline {
             }
         }
         stage('Build Gateway') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('gateway') {
                     sh 'docker build -t esp31-gateway .'
