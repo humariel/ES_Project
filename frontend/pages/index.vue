@@ -17,18 +17,15 @@
       </l-polygon>
     </l-map>
     <transition mode="out-in" name="translate-fade">
-      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity">
+      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity && entities.length">
         <div class="sidebar-content">
           <template v-if="selectedEntity.type == 'sensor'">
             <h5>SENSOR ID</h5>
             <div>{{selectedEntity.id}}</div>
             <h5>PARISH</h5>
             <div>{{selectedEntity.parish}}</div>
-            <h5>LAST 50 VALUES</h5>
-            <Chart v-for="key of keys" :title="key" :key="key" :series="[{
-              name: key.slice(0, 1).toUpperCase() + key.slice(1),
-              data: values[selectedEntity.id][key].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
-            }]"/>
+            <h5>LAST 20 VALUES</h5>
+            <Chart v-for="key of keys" :title="key" :key="key" :values="[{label: key.slice(0, 1).toUpperCase() + key.slice(1), data: values[selectedEntity.id][key] }]" />
           </template>
           <template v-else>
             <h5>PARISH NAME</h5>
@@ -36,8 +33,8 @@
             <h5>PARISH ID</h5>
             <div>{{selectedEntity.id}}</div>
             <AlertForm :verticals="keys"/>
-            <h5>LAST 50 VALUES FROM ALL SENSORS IN THE PARISH</h5>
-            <Chart v-for="vert in keys" :key="vert" :title="vert" :series="seriesParish(vert)" />
+            <!-- <h5>LAST 20 VALUES FROM ALL SENSORS IN THE PARISH</h5>
+            <Chart v-for="vert in keys" :key="vert" :title="vert" :values="seriesParish(vert)" /> -->
           </template>
         </div>
       </div>
@@ -116,7 +113,7 @@ export default {
             label: value.timestamp,
             value: value[key]
           })
-          if(this.values[value.entity][key].length > 50) 
+          if(this.values[value.entity][key].length > 20) 
             this.values[value.entity][key] = this.values[value.entity][key].slice(1);
         }
         
@@ -160,8 +157,11 @@ export default {
         let sensors = this.getParishSensors(this.selectedEntity.id)
         for(let s in sensors){
             series.push({
-              name: sensors[s].id,
-              data: this.values[sensors[s].id][vert].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+              label: sensors[s].id,
+              data: this.values[sensors[s].id][vert].map(v => ({
+                label: new Date(v.label).getTime(), 
+                value: v.value.toFixed(2)
+              }))
             })
         }
         return series
@@ -204,9 +204,11 @@ body {
 }
 
 .sidebar-content{
-  margin-top: 30px;
-  margin-left: 30px;
-  width: 25rem;
+  width: 100%;
+  padding: 20px;
+  & > * {
+    width: 100%;
+  }
 }
 
 .map {

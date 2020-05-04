@@ -63,7 +63,7 @@ public class ScheduledTasks {
         }
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 6000)
     public void reportCurrentTime() {
 
         for (int i = 0; i < coords.length; i++) {
