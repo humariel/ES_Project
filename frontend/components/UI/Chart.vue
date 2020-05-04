@@ -8,16 +8,54 @@
         :datalabel="label"
         :labels="labels"
   />-->
-  <div id="chart">
-    <apexcharts type="line" height="350" ref="chart" :options="chartOptions" :series="series"></apexcharts>
+  <div>
+
+    <my-line :options="{
+      scales: {
+          xAxes: [{
+              ticks: {
+                maxTicksLimit: 10,
+              }
+          }]
+      }
+    }" :chart-data="{
+      labels: labels,
+      datasets: data
+    }"></my-line>
+
+    <!-- <chartjs-line
+      ref="chart"
+      :options="options"
+      :datalabel="title.charAt(0).toUpperCase() + title.slice(1)"
+      :data="data"
+      :labels="labels"
+      :bind="true"
+    />
+ -->
+    <!-- <apexcharts type="line" height="350" ref="chart" :options="chartOptions" :series="series"></apexcharts> -->
   </div>
 </template>
 
 <script>
+
+import moment from 'moment';
+
 export default {
   props: {
     series: Array,
     title: String,
+    values: Array
+  },
+  computed: {
+    labels() {
+      return this.values[0].data.map(v => moment(new Date(v.label)).format('HH:mm:ss'))
+    },
+    data() {
+      return this.values.map(a => ({
+        label: a.label,
+        data: a.data.map(v => v.value)
+      }))
+    }
   },
   // computed: {
   //   series() {
@@ -31,16 +69,22 @@ export default {
   // },
   data() {
     return {
+      options: {
+        scales: {
+          xAxes: [{
+          }]
+        }
+      },
       chartOptions: {
         chart: {
           id: "realtime",
           height: 200,
           type: "line",
           animations: {
-            enabled: true,
+            enabled: false,
             easing: "linear",
             dynamicAnimation: {
-              speed: 250
+              speed: 0
             }
           },
           toolbar: {
@@ -80,6 +124,7 @@ export default {
     };
   },
   mounted: function() {
+    console.log(this.$refs.chart)
     /* var me = this;
     window.setInterval(function() {
       getNewSeries(lastDate, {
