@@ -38,6 +38,8 @@ public class AppController {
 
     private static final Logger log = LoggerFactory.getLogger(AppController.class);
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @PostConstruct
     public void init() throws IOException {
 
@@ -62,8 +64,9 @@ public class AppController {
         return value;
     }
 
-    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "values_consumers")
-    private void listener(Value value){
+    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listener(String message) throws Exception {
+        Value value = mapper.readValue(message, Value.class);
         Parish targetParish = parishRepo.findParishContainingEntity(value.getLocation().getCoords());
         value.setParish(targetParish.getId());
         value.setEntity(value.getId());
@@ -74,7 +77,8 @@ public class AppController {
     }
 
     @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
-    private void listenTrigger(Trigger trigger) {
+    private void listenTrigger(String message) throws Exception {
+        Trigger trigger = mapper.readValue(message, Trigger.class);
         System.out.println(trigger);
         template.convertAndSend("/topic/trigger", trigger);
     }
