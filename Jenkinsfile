@@ -22,7 +22,11 @@ pipeline {
             }
             steps {
                 dir('gateway') {
-                    sh 'docker build -t esp31-gateway .'
+                    sh '''
+                        docker build -t esp31-gateway .
+                        docker tag esp31-gateway 192.168.160.99:5000/esp31-gateway
+                        docker push 192.168.160.99:5000/esp31-gateway
+                    '''
                 }
             }
         }
@@ -32,7 +36,11 @@ pipeline {
             }
             steps {
                 dir('webserver') {
-                    sh 'docker build -t esp31-webserver .'
+                    sh '''
+                        docker build -t esp31-webserver .
+                        docker tag esp31-webserver 192.168.160.99:5000/esp31-webserver
+                        docker push 192.168.160.99:5000/esp31-webserver
+                    '''
                 }
             }
         }
@@ -42,43 +50,8 @@ pipeline {
             }
             steps {
                 dir('frontend') {
-                    sh 'docker build -t esp31-frontend .'
-                }
-            }
-        }
-        stage('Publish Gateway') {
-            when {
-                branch 'deploy'
-            }
-            steps {
-                dir('gateway') {
-                   sh '''
-                        docker tag esp31-gateway 192.168.160.99:5000/esp31-gateway
-                        docker push 192.168.160.99:5000/esp31-gateway
-                    '''
-                }
-            }
-        }
-        stage('Publish Webserver') {
-            when {
-                branch 'deploy'
-            }
-            steps {
-                dir('webserver') {
-                   sh '''
-                        docker tag esp31-webserver 192.168.160.99:5000/esp31-webserver
-                        docker push 192.168.160.99:5000/esp31-webserver
-                    '''
-                }
-            }
-        }
-        stage('Publish Frontend') {
-            when {
-                branch 'deploy'
-            }
-            steps {
-                dir('frontend') {
-                   sh '''
+                    sh '''
+                        docker build -t esp31-frontend .
                         docker tag esp31-frontend 192.168.160.99:5000/esp31-frontend
                         docker push 192.168.160.99:5000/esp31-frontend
                     '''
