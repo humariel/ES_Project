@@ -3,6 +3,9 @@ pipeline {
 
     stages {
         stage('Gateway Test') {
+            when {
+                branch 'master'
+            }
             steps {
                 dir('gateway') {
                 	sh 'mvn test'
@@ -10,6 +13,9 @@ pipeline {
             }
         }
         stage('Webserver Test') {
+            when {
+                branch 'master'
+            }
             steps {
                 dir('webserver') {
                 	sh 'mvn test'
