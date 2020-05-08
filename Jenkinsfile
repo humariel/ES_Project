@@ -57,6 +57,7 @@ pipeline {
                 }
             }
         }
+        stage('Publish Frontend'){
             steps {
                 dir('frontend') {
                    sh '''
