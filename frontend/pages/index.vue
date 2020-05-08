@@ -1,9 +1,9 @@
 
 <template>
   <div class="map">
-    <l-map :class="{margin: selectedEntity ? selectedEntity.id : null}" class="map--map" @click="clickedInsideParish" :zoom=13 :center="[40.627343, -8.654386]">
+    <l-map :class="{margin: selectedEntity}" class="map--map" @click="clickedInsideParish" :zoom=13 :center="[40.627343, -8.654386]">
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-      <l-marker @click="selectedEntity = {type: 'sensor', id: entity.id, parish: entity.parish.properties.Freguesia}" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
+      <l-marker @click="selectedEntity = entity" v-for="entity of entities" :key="entity.id" :lat-lng="entity.location">
         <l-tooltip>
           <div><span>ID: </span>{{entity.id}}</div>
           <div><span>Location: </span>{{entity.location}}</div>
@@ -14,30 +14,28 @@
         </l-tooltip>
       </l-marker>
       <l-polygon @click="onParishClick(parish)" v-for="parish in geojson.features" :key="parish.properties.id" :lat-lngs="[parish.geometry.coordinates[0].map(a => [a[1], a[0]])]" :color="'blue'" :fillColor="'#000000aa'">
+
       </l-polygon>
     </l-map>
     <transition mode="out-in" name="translate-fade">
-      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity">
+      <div :key="selectedEntity.id" class="map__sidebar" v-if="selectedEntity && entities.length">
         <div class="sidebar-content">
-          <template v-if="selectedEntity.type == 'sensor'">
+          <template v-if="selectedEntity.parish">
             <h5>SENSOR ID</h5>
             <div>{{selectedEntity.id}}</div>
             <h5>PARISH</h5>
-            <div>{{selectedEntity.parish}}</div>
-            <h5>LAST 50 VALUES</h5>
-            <Chart v-for="key of keys" :title="key" :key="key" :series="[{
-              name: key.slice(0, 1).toUpperCase() + key.slice(1),
-              data: values[selectedEntity.id][key].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
-            }]"/>
+            <div>{{selectedEntity.parish.properties.Freguesia}}</div>
+            <h5>LAST 20 VALUES</h5>
+            <Chart v-for="key of keys" :title="key" :key="key" :values="[{label: key.slice(0, 1).toUpperCase() + key.slice(1), data: values[selectedEntity.id][key] }]" />
           </template>
           <template v-else>
             <h5>PARISH NAME</h5>
-            <div>{{selectedEntity.parish}}</div>
+            <div>{{selectedEntity.properties.Freguesia}}</div>
             <h5>PARISH ID</h5>
-            <div>{{selectedEntity.id}}</div>
-            <AlertForm :verticals="keys"/>
-            <h5>LAST 50 VALUES FROM ALL SENSORS IN THE PARISH</h5>
-            <Chart v-for="vert in keys" :key="vert" :title="vert" :series="seriesParish(vert)" />
+            <div>{{selectedEntity.properties.id}}</div>
+            <AlertForm :parish="selectedEntity.properties.id" :verticals="keys"/>
+            <h5>LAST 20 VALUES FROM ALL SENSORS IN THE PARISH</h5>
+            <Chart v-for="vert in keys" :key="vert" :title="vert" :values="seriesParish(vert)" />
           </template>
         </div>
       </div>
@@ -116,10 +114,15 @@ export default {
             label: value.timestamp,
             value: value[key]
           })
-          if(this.values[value.entity][key].length > 50) 
+          if(this.values[value.entity][key].length > 20) 
             this.values[value.entity][key] = this.values[value.entity][key].slice(1);
         }
         
+      })
+
+      stompClient.subscribe("/topic/trigger", (message) => {
+        const value = JSON.stringify(JSON.parse(message.body), null, 4);
+        alert(value)
       })
       
     });
@@ -146,22 +149,21 @@ export default {
       }
     },
     onParishClick(parish) {
-      this.selectedEntity = {
-        type: 'parish', 
-        id: parish.properties.id, 
-        parish: parish.properties.Freguesia
-      }
+      this.selectedEntity = parish
     },
     getParishSensors(parishId){
       return this.entities.filter(x => x.parish.properties.id == parishId)
     },
     seriesParish(vert){
         let series = []
-        let sensors = this.getParishSensors(this.selectedEntity.id)
+        let sensors = this.getParishSensors(this.selectedEntity.properties.id)
         for(let s in sensors){
             series.push({
-              name: sensors[s].id,
-              data: this.values[sensors[s].id][vert].map(v => [new Date(v.label).getTime(), v.value.toFixed(2)])
+              label: sensors[s].id,
+              data: this.values[sensors[s].id][vert].map(v => ({
+                label: new Date(v.label).getTime(), 
+                value: v.value.toFixed(2)
+              }))
             })
         }
         return series
@@ -204,9 +206,12 @@ body {
 }
 
 .sidebar-content{
-  margin-top: 30px;
-  margin-left: 30px;
-  width: 25rem;
+  width: 100%;
+  padding: 20px;
+  padding-top: 0;
+  & > * {
+    width: 100%;
+  }
 }
 
 .map {

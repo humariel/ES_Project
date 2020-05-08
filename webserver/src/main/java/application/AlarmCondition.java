@@ -4,15 +4,16 @@ public class AlarmCondition {
 
     private String type;
     private String operation;
-    private int value;
-
+    private Double threshold;
+    private Double value;
 
     public AlarmCondition() {
     }
 
-    public AlarmCondition(String type, String operation, int value) {
+    public AlarmCondition(String type, String operation, Double threshold, Double value) {
         this.type = type;
         this.operation = operation;
+        this.threshold = threshold;
         this.value = value;
     }
 
@@ -32,11 +33,19 @@ public class AlarmCondition {
         this.operation = operation;
     }
 
-    public int getValue() {
+    public Double getThreshold() {
+        return this.threshold;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
+    }
+
+    public Double getValue() {
         return this.value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
@@ -45,8 +54,10 @@ public class AlarmCondition {
         return "{" +
             " type='" + getType() + "'" +
             ", operation='" + getOperation() + "'" +
+            ", threshold='" + getThreshold() + "'" +
             ", value='" + getValue() + "'" +
             "}";
     }
+
     
 }

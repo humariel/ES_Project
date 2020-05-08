@@ -12,7 +12,6 @@ public class Alarm {
     private int time;
     private AlarmCondition[] conditions;
 
-
     public Alarm() {
     }
 

@@ -15,11 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
+@CrossOrigin(origins = "*")
 public class AppController {
 
     @Autowired
@@ -36,6 +38,8 @@ public class AppController {
 
     private static final Logger log = LoggerFactory.getLogger(AppController.class);
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @PostConstruct
     public void init() throws IOException {
 
@@ -49,21 +53,34 @@ public class AppController {
     }
 
     @PostMapping(value="alarm")
-    public Alarm postMethodName(@RequestBody Alarm alarm) throws Exception {
+    public Alarm postAlarm(@RequestBody Alarm alarm) throws Exception {
         Alarm newAlarm = alarmRepo.save(alarm);
-        System.out.println(newAlarm);
         return newAlarm;
     }
 
-    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "values_consumers")
-    private void listener(Value value){
+    @PostMapping(value="value")
+    public Value postValue(@RequestBody Value value) throws Exception {
+        Value newValue = valueRepo.save(value);
+        return value;
+    }
+
+    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listener(String message) throws Exception {
+        Value value = mapper.readValue(message, Value.class);
         Parish targetParish = parishRepo.findParishContainingEntity(value.getLocation().getCoords());
         value.setParish(targetParish.getId());
         value.setEntity(value.getId());
         value.setId(null);
         value = valueRepo.save(value);
-        System.out.println("Receiving value " + value);
+        //System.out.println("Receiving value " + value);
         template.convertAndSend("/topic/value", value);
+    }
+
+    @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listenTrigger(String message) throws Exception {
+        Trigger trigger = mapper.readValue(message, Trigger.class);
+        System.out.println(trigger);
+        template.convertAndSend("/topic/trigger", trigger);
     }
     
 }

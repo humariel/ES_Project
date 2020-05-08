@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 public class ScheduledTasks {
 
@@ -34,10 +37,9 @@ public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Autowired
-    private KafkaTemplate<String, Value> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
-    private KafkaTemplate<String, Trigger> kafkaTemplateTrigger;
+    private ObjectMapper mapper = new ObjectMapper();
 
     private int time = 0;
     private final Double[][] coords = new Double[][] { { 40.633084, -8.660537 }, { 40.635691, -8.659498 },
@@ -63,90 +65,93 @@ public class ScheduledTasks {
         }
     }
 
-    @Scheduled(fixedRate = 10000)
-    public void reportCurrentTime() {
+    @Scheduled(fixedRate = 6000)
+    public void reportCurrentTime() throws JsonProcessingException {
 
         for (int i = 0; i < coords.length; i++) {
             Value v = simsMap.get(coords[i]).simulate();
-            sendKafkaMessage("value", v);
+            sendKafkaMessage("value", mapper.writeValueAsString(v));
         }
 
     }
 
-    @Scheduled(fixedRate = 60000, initialDelay = 0)
-    public void checkAlarms() {
+    @Scheduled(fixedRate = 1000, initialDelay = 0)
+    public void checkAlarms() throws JsonProcessingException {
         List<Alarm> alarmList = alarmRepo.findAll();
+        long timestamp = (new Date()).getTime();
         for (Alarm a : alarmList) {
-            if (time % a.getTime() == 0) {
-                System.out.println("ALARM LIST" + alarmList);
-                long timestamp = (new Date()).getTime();
+            if (time > 0 && time % a.getTime() == 0) {
                 // get values from alarm parish from alarm time frame
-                List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (60 * 1000 * time));
+                List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (1000 * time));
+                logger.info(valueList.get(0).toString());
                 // if alarm conditions are true create, save and send trigger
-                if(verifyAlarmTrigger(a.getConditions(), valueList)){
-                    Trigger trigger = new Trigger(UUID.randomUUID().toString(),a.getId(),timestamp);
-                    sendKafkaMessageTrigger("trigger", trigger);
-                    //trigger = triggerRepo.save(trigger);
+                if(verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
+                    Trigger trigger = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
+                    sendKafkaMessage("trigger", mapper.writeValueAsString(trigger));
+                    triggerRepo.save(trigger);
                 }
             }
         }
         time++;
     }
 
-    public boolean verifyAlarmTrigger(AlarmCondition[] condList, List<Value> valueList) {
+    public boolean verifyAlarmTrigger(AlarmCondition[] condList, Value parishValues) {
         boolean trigger = false;
 
         for (AlarmCondition a : condList) {
+
             Double avgVal = 0.0;
             switch (a.getType()) {
                 case "temperature":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getTemperature()));
-                    System.out.println("AVG TEMPERATURE: " + avgVal);
+                    avgVal = parishValues.getTemperature();
                     break;
 
                 case "humidity":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getHumidity()));
-                    System.out.println("AVG HUMIDITY: " + avgVal);
+                    avgVal = parishValues.getHumidity();
                     break;
 
                 case "pressure":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getPressure()));
+                    avgVal = parishValues.getPressure();
                     break;
 
                 case "pm10":
-                    avgVal = valueList.stream().collect(Collectors.averagingDouble(v -> v.getPm10()));
+                    avgVal = parishValues.getPm10();
                     break;
 
                 default:
                     trigger = false;
             }
 
-            if (a.getOperation() == "<") {
-                trigger = avgVal < a.getValue();
+            if (a.getOperation().equals("<")) {
+                trigger = avgVal < a.getThreshold();
             } else {
-                trigger = avgVal > a.getValue();
+                trigger = avgVal > a.getThreshold();
             }
+
+            a.setValue(avgVal);
+
         }
+
         return trigger;
     }
 
-    public void sendKafkaMessageTrigger(String topic, Trigger entity) {
-        ListenableFuture<SendResult<String, Trigger>> future = kafkaTemplateTrigger.send(topic, entity);
-        future.addCallback(new ListenableFutureCallback<SendResult<String, Trigger>>() {
+    public void sendKafkaMessage(String topic, String entity) {
+        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, entity);
+        future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onFailure(Throwable ex) {
                 logger.info("Unable to send message = [" + entity.toString() + "] due to : " + ex.getMessage());
             }
 
             @Override
-            public void onSuccess(SendResult<String, Trigger> result) {
+            public void onSuccess(SendResult<String, String> result) {
                 logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });
     }
 
 
-    public void sendKafkaMessage(String topic, Value entity) {
+    /* public void sendKafkaMessage(String topic, Value entity) {
         ListenableFuture<SendResult<String, Value>> future = kafkaTemplate.send(topic, entity);
         future.addCallback(new ListenableFutureCallback<SendResult<String, Value>>() {
             @Override
@@ -156,8 +161,8 @@ public class ScheduledTasks {
 
             @Override
             public void onSuccess(SendResult<String, Value> result) {
-                logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
+                //logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });
-    }
+    } */
 }

@@ -1,83 +1,136 @@
 <template>
   <b-form @submit="onAlertCreation" @reset="onAlertReset">
-    <h5>FETCHING PERIOD (IN MINUTES)</h5>
+    <h5>FETCHING PERIOD (IN SECONDS)</h5>
     <b-form-group
       id="input-group-1"
       label-for="input-1"
       description="Period at which the alert will be checked"
+      style="margin-bottom: 0"
     >
       <b-form-input
         id="input-1"
-        v-model="form.time"
+        v-model="time"
         required
         placeholder="Enter fetching period"
       ></b-form-input>
     </b-form-group>
 
-    <h5>TYPE</h5>
-    <b-form-group id="input-group-3" label-for="input-3">
-      <b-form-select
-        id="input-3"
-        v-model="form.type"
-        :options="verticals"
-        placeholder="Choose the type"
-        required
-      ></b-form-select>
-    </b-form-group>
+    <span style="margin-top: 1rem; display: block" v-if="conditions.length">{{(conditions)}}</span> 
+    
+    <b-form @submit="$event.stopPropagation(); $event.preventDefault(); conditions.push({
+          type,
+          operation,
+          threshold: value
+        }); type = null; operation = null; value = ''">
+      <div style="display: flex">
 
-    <h5>OPERATION</h5>
-    <b-form-group id="input-group-3" label-for="input-3">
-      <b-form-select
-        id="input-3"
-        v-model="form.operation"
-        :options="['Higher than', 'Lower than']"
-        required
-        placeholder="Choose the operation"
-      ></b-form-select>
-    </b-form-group>
+        <div style="width: 100%; margin-right: 2.5px; margin-bottom: -1rem">
+          <h5>TYPE</h5>
+          <b-form-group id="input-group-3" label-for="input-3">
+            <b-form-select
+              id="input-3"
+              v-model="type"
+              :options="verticals"
+              placeholder="Choose the type"
+              required
+            >
+              <template v-slot:first>
+                <b-form-select-option :value="null" disabled>Choose a type</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+        </div>
 
+        <div style="width: 100%; margin-left: 2.5px; margin-bottom: -1rem">
+          <h5>OPERATION</h5>
+          <b-form-group id="input-group-3" label-for="input-3">
+            <b-form-select
+              id="input-3"
+              v-model="operation"
+              :options="[{value: '>', text: 'Higher than'},{value: '<', text: 'Lower than'}]"
+              required
+              placeholder="Choose the operation"
+            >
+              <template v-slot:first>
+                <b-form-select-option :value="null" disabled>Choose the operation</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+        </div>
 
-    <h5>VALUE</h5>
-    <b-form-group
-      id="input-group-1"
-      label-for="input-1"
-      description="Threshold value"
-    >
-      <b-form-input
-        id="input-1"
-        v-model="form.value"
-        required
-        placeholder="Enter the threshold value"
-      ></b-form-input>
-    </b-form-group>
+      </div>
 
-    <b-button type="submit" variant="primary">Submit</b-button>
-    <b-button type="reset" variant="danger">Reset</b-button>
+      <div style="display: flex; align-items:flex-end">
+        
+        <div style="width: 100%; margin-right: 2.5px">
+          <h5>VALUE</h5>
+          <b-form-group
+            id="input-group-1"
+            label-for="input-1"
+          >
+            <b-form-input
+              id="input-1"
+              v-model="value"
+              required
+              placeholder="Enter the threshold value"
+            ></b-form-input>
+          </b-form-group>
+        </div>
+
+        <b-button type="submit" variant="primary" style="width: 25.5rem; margin-left: 2.5px; height: 2.4rem; margin-bottom: 1rem">Add Condition</b-button>
+
+      </div>
+    </b-form>
+
+    <b-button v-if="conditions.length" type="submit" variant="primary">Submit</b-button>
+    <b-button v-if="changed" @click="onAlertReset" variant="danger">Reset</b-button>
+  
   </b-form>
 </template>
 
 <script>
 export default {
   props:{
-    verticals: Array
+    verticals: Array,
+    parish: String
   },
   data(){
     return{
-      form: {},
+      type: null,
+      operation: null,
+      time: '',
+      value: '',
+      conditions: []
+    }
+  },
+  computed: {
+    changed() {
+      return this.type != null || this.operation != null || this.time != '' || this.value != '' || this.conditions.length
     }
   },
   methods:{
     onAlertCreation(evt) {
       evt.preventDefault()
-
+      this.$axios({
+        method: 'post',
+        url: 'http://localhost:8080/alarm',
+        data: {
+          parish: this.parish,
+          time: this.time,
+          conditions: this.conditions
+        }
+      })
+      alert('Alarme criado')
+      this.onAlertReset(evt)
     },
     onAlertReset(evt) {
       evt.preventDefault()
       // Reset our form values
-      this.form.type = ''
-      this.form.time = ''
-      this.form.operation = ''
-
+      this.type = null
+      this.time = ''
+      this.operation = null
+      this.value = ''
+      this.conditions = []
     },
   }
 }
