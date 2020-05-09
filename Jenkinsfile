@@ -23,9 +23,6 @@ pipeline {
             }
         }
         stage('Build Gateway') {
-            when {
-                branch 'deploy'
-            }
             steps {
                 dir('gateway') {
                     sh '''
