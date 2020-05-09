@@ -66,7 +66,7 @@ pipeline {
         }
         stage('Deploy Gateway') {
             when {
-                branch 'deploy'
+                branch 'gateway'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
@@ -79,7 +79,7 @@ pipeline {
         }
         stage('Deploy Webserver') {
             when {
-                branch 'deploy'
+                branch 'webserver'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Deploy Frontend') {
             when {
-                branch 'deploy'
+                branch 'frontend'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
