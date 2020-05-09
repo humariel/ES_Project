@@ -67,9 +67,9 @@ pipeline {
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway &"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 3181:8081 192.168.160.99:5000/esp31-gateway &"
                 }
             }
@@ -80,9 +80,9 @@ pipeline {
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container stop &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container rm &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-webserver &"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container stop"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-webserver -q -a | xargs --no-run-if-empty docker container rm"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-webserver"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 3180:8080 192.168.160.99:5000/esp31-webserver &"
                 }
             }
@@ -93,9 +93,9 @@ pipeline {
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container stop &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container rm &"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-frontend &"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container stop"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-frontend -q -a | xargs --no-run-if-empty docker container rm"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-frontend"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 3100:3000 192.168.160.99:5000/esp31-frontend &"
                 }
             }
