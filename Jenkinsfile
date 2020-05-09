@@ -63,20 +63,20 @@ pipeline {
         }
         stage('Deploy Gateway') {
             when {
-                branch 'deploy'
+                branch 'gateway'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container stop &"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker ps -f ancestor=esp31-gateway -q -a | xargs --no-run-if-empty docker container rm &"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker pull 192.168.160.99:5000/esp31-gateway &"
                     sh "ssh -o 'StrictHostKeyChecking=no' -l esp31 192.168.160.103 docker run -p 3181:8081 192.168.160.99:5000/esp31-gateway &"
                 }
             }
         }
         stage('Deploy Webserver') {
             when {
-                branch 'deploy'
+                branch 'webserver'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
@@ -89,7 +89,7 @@ pipeline {
         }
         stage('Deploy Frontend') {
             when {
-                branch 'deploy'
+                branch 'frontend'
             }
             steps {
                 sshagent(credentials: ['esp31-deploy']){
