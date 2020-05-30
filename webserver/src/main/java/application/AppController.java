@@ -64,7 +64,7 @@ public class AppController {
         return value;
     }
 
-    @KafkaListener(topics = "value", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    @KafkaListener(topics = "esp31_value", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
     private void listener(String message) throws Exception {
         Value value = mapper.readValue(message, Value.class);
         Parish targetParish = parishRepo.findParishContainingEntity(value.getLocation().getCoords());
@@ -76,7 +76,7 @@ public class AppController {
         template.convertAndSend("/topic/value", value);
     }
 
-    @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    @KafkaListener(topics = "esp31_trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
     private void listenTrigger(String message) throws Exception {
         Trigger trigger = mapper.readValue(message, Trigger.class);
         System.out.println(trigger);

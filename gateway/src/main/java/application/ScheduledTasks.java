@@ -136,7 +136,7 @@ public class ScheduledTasks {
     }
 
     public void sendKafkaMessage(String topic, String entity) {
-        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, entity);
+        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send("esp31_" + topic, entity);
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onFailure(Throwable ex) {
@@ -145,7 +145,7 @@ public class ScheduledTasks {
 
             @Override
             public void onSuccess(SendResult<String, String> result) {
-                logger.info("Kafka: Sent message to topic " + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
+                logger.info("Kafka: Sent message to topic esp31_" + topic + " = [" + entity.toString() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
         });
     }
