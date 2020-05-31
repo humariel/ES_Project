@@ -121,6 +121,7 @@ export default {
       })
 
       stompClient.subscribe("/topic/trigger", (message) => {
+        console.log(message)
         const value = JSON.stringify(JSON.parse(message.body), null, 4);
         alert(value)
       })
