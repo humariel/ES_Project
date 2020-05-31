@@ -100,13 +100,14 @@
             <artifactId>cucumber-reporting</artifactId>
             <version>4.2.3</version>
         </dependency>
-    </dependencies>
 
-    <dependency>
-        <groupId>com.internetitem</groupId>
-        <artifactId>logback-elasticsearch-appender</artifactId>
-        <version>1.6</version>
-    </dependency>
+        <dependency>
+            <groupId>com.internetitem</groupId>
+            <artifactId>logback-elasticsearch-appender</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
