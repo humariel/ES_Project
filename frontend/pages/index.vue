@@ -134,7 +134,8 @@ export default {
 
   },
   methods:{
-    deleteAlarm(id) {
+    async deleteAlarm(id) {
+      alarms.splice(alarms.findIndex(a => a._id == id), 1)
       await axios({
         method: 'delete',
         url: 'http://localhost:8080/alarm',
