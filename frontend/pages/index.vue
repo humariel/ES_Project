@@ -71,16 +71,20 @@ export default {
       },
       entities: [],
       selectedEntity: null,
+      alarms: [],
       values: {},
       form: []
     }
   },
   async asyncData() {
     return {
-      geojson: (await axios.get('/geojson/aveiro.geojson')).data
+      geojson: (await axios.get('/geojson/aveiro.geojson')).data,
+      alarms: JSON.parse((await axios.get('http://localhost:8080/alarms')).data)
     }
   },
   async created () {
+
+    
     const serverUrl = 'http://localhost:8080/breatheasy'
     let ws = new SockJS(serverUrl);
     const stompClient = Stomp.over(ws);
@@ -130,6 +134,16 @@ export default {
 
   },
   methods:{
+    deleteAlarm(id) {
+      await axios({
+        method: 'delete',
+        url: 'http://localhost:8080/alarm',
+        data: {
+          id
+        }
+      })
+      alert("ALARME REMOVIDO")
+    },
     isPointInsidePolygon(point, poly) {
       var polyPoints = poly;       
       var x = point.lat, y = point.lng;
