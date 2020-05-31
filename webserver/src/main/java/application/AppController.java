@@ -13,6 +13,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -21,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -65,6 +68,16 @@ public class AppController {
         sendKafkaMessage("alarm", mapper.writeValueAsString(alarm));
         /* Alarm newAlarm = alarmRepo.save(alarm);
         return newAlarm; */
+    }
+
+    @GetMapping(value="alarms")
+    public List<Alarm> getAlarms() throws Exception {
+        return alarmRepo.findAll();
+    }
+
+    @DeleteMapping(value="alarm")
+    public void deleteAlarm(String id) throws Exception {
+        alarmRepo.deleteById(id);
     }
 
     @PostMapping(value="value")
