@@ -29,9 +29,9 @@ pipeline {
             steps {
                 dir('gateway') {
                     sh '''
-                        docker rmi --force esp31-gateway:latest
+                        docker rmi --force esp31-gateway
                         docker build -t esp31-gateway .
-                        docker tag esp31-gateway esp31-gateway
+                        docker tag esp31-gateway 192.168.160.99:5000/esp31-gateway
                         docker push 192.168.160.99:5000/esp31-gateway
                     '''
                 }
@@ -44,9 +44,9 @@ pipeline {
             steps {
                 dir('webserver') {
                     sh '''
-                        docker rmi --force esp31-webserver:latest
+                        docker rmi --force esp31-webserver
                         docker build -t esp31-webserver .
-                        docker tag esp31-webserver esp31-webserver
+                        docker tag esp31-webserver 192.168.160.99:5000/esp31-webserver
                         docker push 192.168.160.99:5000/esp31-webserver
                     '''
                 }
@@ -59,9 +59,9 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        docker rmi --force esp31-frontend:latest
+                        docker rmi --force esp31-frontend
                         docker build -t esp31-frontend .
-                        docker tag esp31-frontend esp31-frontend
+                        docker tag esp31-frontend 192.168.160.99:5000/esp31-frontend
                         docker push 192.168.160.99:5000/esp31-frontend
                     '''
                 }
