@@ -89,6 +89,9 @@
 </template>
 
 <script>
+
+import axios from 'axios'
+
 export default {
   props:{
     verticals: Array,
@@ -109,18 +112,33 @@ export default {
     }
   },
   methods:{
-    onAlertCreation(evt) {
+    async onAlertCreation(evt) {
       evt.preventDefault()
-      this.$axios({
+      let newAlarm = {
+        parish: this.parish,
+        time: this.time,
+        conditions: this.conditions
+      }
+      await axios({
         method: 'post',
         url: 'http://localhost:8080/alarm',
-        data: {
-          parish: this.parish,
-          time: this.time,
-          conditions: this.conditions
+        data: newAlarm
+      })
+      let currentAlarms = this.$store.state.alarms.filter(x => x.parish == this.parish)
+      currentAlarms.push
+      let backendAlarms = (await axios.get('http://localhost:8080/alarms')).data
+      .filter(x => x.parish == this.parish)
+      .map(x => {
+        let existingAlarm = currentAlarms.find(y => y.id == x.id)
+        return {
+          triggered: existingAlarm ? existingAlarm.triggered : false,
+          ...x
         }
       })
-      alert('Alarme criado')
+      .forEach(x => {
+        this.$store.dispatch('deleteAlarm',x.id)
+        this.$store.dispatch('addAlarm',x)
+      })
       this.onAlertReset(evt)
     },
     onAlertReset(evt) {
