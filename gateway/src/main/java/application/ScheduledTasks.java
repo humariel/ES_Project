@@ -74,7 +74,7 @@ public class ScheduledTasks {
         }
 
     }
-
+    
     //@Scheduled(fixedRate = 1000, initialDelay = 0)
     //public void checkAlarms() throws JsonProcessingException {
     //    List<Alarm> alarmList = alarmRepo.findAll();
@@ -94,7 +94,7 @@ public class ScheduledTasks {
     //    }
     //    time++;
     //}
-
+    
     public boolean verifyAlarmTrigger(AlarmCondition[] condList, Value parishValues) {
         boolean trigger = false;
 

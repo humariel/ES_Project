@@ -76,24 +76,24 @@ services:
         - 3100:3000
         container_name: nuxt
 
-    alerts:
-        restart: always
-        build: ./alerts
-        container_name: alerts
-        ports:
-            - 3183:8083
-        depends_on: 
-            - kafka
-            - mongo
-
-    alarms:
-        restart: always
-        build: ./alarm
-        container_name: alarms
-        ports:
-            - 3182:8082
-        depends_on: 
-            - kafka
-            - mongo
+    # alerts:
+    #     restart: always
+    #     build: ./alerts
+    #     container_name: alerts
+    #     ports:
+    #         - 3183:8083
+    #     depends_on: 
+    #         - kafka
+    #         - mongo
+# 
+    # alarms:
+    #     restart: always
+    #     build: ./alarm
+    #     container_name: alarms
+    #     ports:
+    #         - 3182:8082
+    #     depends_on: 
+    #         - kafka
+    #         - mongo
 
 
