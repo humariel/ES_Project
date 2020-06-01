@@ -15,12 +15,16 @@
           <b-card-body>
             <h5>ID</h5>
             <b-card-text>
-              {{v.id}}
+              <div>
+                {{v.id}}
+              </div>
             </b-card-text>
             <h5>CONDITIONS</h5>
             <b-card-text v-for="cond in v.conditions" :key="cond.type+cond.operation+cond.threshold">
               {{ cond.type }} {{ cond.operation }} {{ cond.threshold }}
             </b-card-text>
+            <h5>DELETE ALARM?</h5>
+            <img @click="deleteAlarm(v.id)" height="32px" src="icons/bin.png" />
           </b-card-body>
         </b-collapse>
       </div>
@@ -29,10 +33,25 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   props:{
     alarms: Array,
   },
+  methods:{
+    async deleteAlarm(id) {
+      await axios({
+        method: 'delete',
+        url: 'http://localhost:8080/alarm',
+        data: {
+          id
+        }
+      })
+      alert("ALARME REMOVIDO")
+      this.$store.dispatch('deleteAlarm',id)
+    },
+  }
 }
 </script>
 

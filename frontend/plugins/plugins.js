@@ -48,3 +48,7 @@ Vue.use(VBScrollspyPlugin)
 import { DropdownPlugin, TablePlugin } from 'bootstrap-vue'
 Vue.use(DropdownPlugin)
 Vue.use(TablePlugin)
+
+export default async (ctx) => {
+  await ctx.store.dispatch('nuxtClientInit', ctx)
+}

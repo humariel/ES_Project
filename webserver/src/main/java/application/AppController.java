@@ -76,7 +76,8 @@ public class AppController {
     }
 
     @DeleteMapping(value="alarm")
-    public void deleteAlarm(String id) throws Exception {
+    public void deleteAlarm(@RequestBody String id) throws Exception {
+        logger.info("Deleting alarm "+id);
         alarmRepo.deleteById(id);
     }
 

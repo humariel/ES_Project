@@ -35,7 +35,7 @@
             <div>{{selectedEntity.properties.id}}</div>
             <AlertForm :parish="selectedEntity.properties.id" :verticals="keys"/>
             <h5>LIST OF PARISH SENSOR ALARMS</h5>
-            <AlarmList :alarms="this.alarms.filter(x => x.parish == selectedEntity.properties.id)"/>
+            <AlarmList :alarms="getAlarms"/>
           </template>
         </div>
       </div>
@@ -81,12 +81,9 @@ export default {
   async asyncData() {
     return {
       geojson: (await axios.get('/geojson/aveiro.geojson')).data,
-      alarms: (await axios.get('http://localhost:8080/alarms')).data
     }
   },
   async created () {
-
-    
     const serverUrl = 'http://localhost:8080/breatheasy'
     let ws = new SockJS(serverUrl);
     const stompClient = Stomp.over(ws);
@@ -136,16 +133,6 @@ export default {
 
   },
   methods:{
-    async deleteAlarm(id) {
-      await axios({
-        method: 'delete',
-        url: 'http://localhost:8080/alarm',
-        data: {
-          id
-        }
-      })
-      alert("ALARME REMOVIDO")
-    },
     isPointInsidePolygon(point, poly) {
       var polyPoints = poly;       
       var x = point.lat, y = point.lng;
@@ -196,6 +183,9 @@ export default {
     keys() {
       return Object.keys(this.entities[0]).filter(k => !['id', 'entity', 'location', 'timestamp', 'parish'].includes(k))
     },
+    getAlarms(){
+      return this.$store.state.alarms.filter(x => x.parish == this.selectedEntity.properties.id)
+    }
   }
 }
 
