@@ -75,25 +75,25 @@ public class ScheduledTasks {
 
     }
 
-    @Scheduled(fixedRate = 1000, initialDelay = 0)
-    public void checkAlarms() throws JsonProcessingException {
-        List<Alarm> alarmList = alarmRepo.findAll();
-        long timestamp = (new Date()).getTime();
-        for (Alarm a : alarmList) {
-            if (time > 0 && time % a.getTime() == 0) {
-                // get values from alarm parish from alarm time frame
-                List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (1000 * time));
-                logger.info(valueList.get(0).toString());
-                // if alarm conditions are true create, save and send trigger
-                if(verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
-                    Trigger trigger = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
-                    sendKafkaMessage("trigger", mapper.writeValueAsString(trigger));
-                    triggerRepo.save(trigger);
-                }
-            }
-        }
-        time++;
-    }
+    //@Scheduled(fixedRate = 1000, initialDelay = 0)
+    //public void checkAlarms() throws JsonProcessingException {
+    //    List<Alarm> alarmList = alarmRepo.findAll();
+    //    long timestamp = (new Date()).getTime();
+    //    for (Alarm a : alarmList) {
+    //        if (time > 0 && time % a.getTime() == 0) {
+    //            // get values from alarm parish from alarm time frame
+    //            List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (1000 * time));
+    //            logger.info(valueList.get(0).toString());
+    //            // if alarm conditions are true create, save and send trigger
+    //            if(verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
+    //                Trigger trigger = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
+    //                sendKafkaMessage("trigger", mapper.writeValueAsString(trigger));
+    //                triggerRepo.save(trigger);
+    //            }
+    //        }
+    //    }
+    //    time++;
+    //}
 
     public boolean verifyAlarmTrigger(AlarmCondition[] condList, Value parishValues) {
         boolean trigger = false;
