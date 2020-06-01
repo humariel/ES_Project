@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Arrays;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -61,7 +63,7 @@ public class Alarm {
             " id='" + getId() + "'" +
             ", parish='" + getParish() + "'" +
             ", time='" + getTime() + "'" +
-            ", conditions='" + getConditions() + "'" +
+            ", conditions='" + Arrays.toString(conditions) + "'" +
             "}";
     }    
     

@@ -165,8 +165,9 @@ public class AppController {
             press += val.getPressure()/nl.size();
         }
         List<Alarm> alarmList = alarmRepo.findAll();
+        alarmList.forEach(System.out::println);
         for (Alarm a : alarmList) {
-            if (a.getParish().equals(value.getParish())){
+            if (a.getParish().equals(value.getParish())){                
                 boolean trigger=true;
                 double threshold=0;
                 for (AlarmCondition condition: a.getConditions()) {
@@ -195,15 +196,15 @@ public class AppController {
                 }
                 // get last trigger
                 List<Trigger> trigs = triggerRepository.findAllByAlarm(a.getId());
-                trigs.forEach(System.out::println);
+                //trigs.forEach(System.out::println);
                 Trigger lastTrig;
                 if (trigs.size() > 0) {
                     lastTrig = trigs.get(trigs.size()-1);
-                    System.out.println("HERE---"+lastTrig.toString());
-                    System.out.println("Timestamp then: "+lastTrig.getTimestamp());
-                    System.out.println("Timestamp now : "+timestamp);
-                    System.out.println("Target timestp: "+(lastTrig.getTimestamp()+60*1000));
-                    System.out.printf("Target is %s\n", (lastTrig.getTimestamp()+60*1000 <= timestamp) ? "smaller" : "bigger" );
+                    //System.out.println("HERE---"+lastTrig.toString());
+                    //System.out.println("Timestamp then: "+lastTrig.getTimestamp());
+                    //System.out.println("Timestamp now : "+timestamp);
+                    //System.out.println("Target timestp: "+(lastTrig.getTimestamp()+60*1000));
+                    //System.out.printf("Target is %s\n", (lastTrig.getTimestamp()+60*1000 <= timestamp) ? "smaller" : "bigger" );
                     if (trigger && (lastTrig.getTimestamp()+60*1000 <= timestamp)) {
                         System.out.println("SAVED");
                         Trigger trig = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
