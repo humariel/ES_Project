@@ -7,6 +7,6 @@ RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "--fail-never
 COPY . /usr/src/app
 RUN ["mvn", "package"]
 
-EXPOSE 8082
+EXPOSE 8083
 
 CMD ["mvn", "spring-boot:run"]
