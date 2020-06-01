@@ -41,5 +41,26 @@ public class CustomValueRepositoryImpl implements CustomValueRepository {
         return mongotemplate.aggregate(aggr, "value", Value.class).getMappedResults();
     }
 
+    @Override
+    public List<Value> getValues(long timestamp){
+
+        MatchOperation parishEquals = Aggregation.match(
+            Criteria.where("timestamp").gte(timestamp)
+        );
+
+        GroupOperation groupByStateAndSumPop = Aggregation.group("parish")
+            .avg("temperature").as("temperature")
+            .avg("humidity").as("humidity")
+            .avg("pressure").as("pressure")
+            .avg("pm10").as("pm10");
+
+        Aggregation aggr = Aggregation.newAggregation(
+            parishEquals,
+            groupByStateAndSumPop
+        );
+
+        return mongotemplate.aggregate(aggr, "value", Value.class).getMappedResults();
+    }
+
 
 }

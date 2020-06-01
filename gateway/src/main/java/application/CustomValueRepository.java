@@ -7,5 +7,6 @@ import application.Value;
 interface CustomValueRepository {
 
     List<Value> getValuesFromParish(String parish, long minCount);
+    List<Value> getValues(long minCount);
 
 }

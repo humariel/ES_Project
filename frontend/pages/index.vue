@@ -34,8 +34,8 @@
             <h5>PARISH ID</h5>
             <div>{{selectedEntity.properties.id}}</div>
             <AlertForm :parish="selectedEntity.properties.id" :verticals="keys"/>
-            <h5>LAST 20 VALUES FROM ALL SENSORS IN THE PARISH</h5>
-            <Chart v-for="vert in keys" :key="vert" :title="vert" :values="seriesParish(vert)" />
+            <h5>LIST OF PARISH SENSOR ALARMS</h5>
+            <AlarmList :alarms="getAlarms"/>
           </template>
         </div>
       </div>
@@ -50,11 +50,13 @@ import * as SockJS from 'sockjs-client';
 import axios from 'axios'
 import Chart from '@/components/UI/Chart'
 import AlertForm from '@/components/UI/AlertForm'
+import AlarmList from '@/components/AlarmList'
 
 export default {
   components: {
     Chart,
-    AlertForm
+    AlertForm,
+    AlarmList
   },
   data() {
     return {
@@ -71,13 +73,14 @@ export default {
       },
       entities: [],
       selectedEntity: null,
+      alarms: [],
       values: {},
       form: []
     }
   },
   async asyncData() {
     return {
-      geojson: (await axios.get('/geojson/aveiro.geojson')).data
+      geojson: (await axios.get('/geojson/aveiro.geojson')).data,
     }
   },
   async created () {
@@ -121,6 +124,7 @@ export default {
       })
 
       stompClient.subscribe("/topic/trigger", (message) => {
+        console.log(message)
         const value = JSON.stringify(JSON.parse(message.body), null, 4);
         alert(value)
       })
@@ -179,6 +183,9 @@ export default {
     keys() {
       return Object.keys(this.entities[0]).filter(k => !['id', 'entity', 'location', 'timestamp', 'parish'].includes(k))
     },
+    getAlarms(){
+      return this.$store.state.alarms.filter(x => x.parish == this.selectedEntity.properties.id)
+    }
   }
 }
 
@@ -188,10 +195,10 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 h5{
-    margin-top: 15px;
-    margin-bottom: 5px;
-    color: rgb(150, 150, 150);
-    font-size: 13px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: rgb(150, 150, 150);
+  font-size: 13px;
 }
 
 body{
