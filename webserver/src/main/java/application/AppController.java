@@ -99,22 +99,7 @@ public class AppController {
         template.convertAndSend("/topic/value", value);
     }
 
-<<<<<<< HEAD
     @KafkaListener(topics = "esp31_trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
-=======
-    @KafkaListener(topics = "alarm", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
-    private void listenerAlarm(String message) throws Exception {
-        Alarm alarm = mapper.readValue(message, Alarm.class);
-        alarmRepo.save(alarm);
-    }
-    
-    @KafkaListener(topics = "parish", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
-    private void listenerParish(String message) throws Exception {
-        sendKafkaMessage("trigger", message);
-    }
-
-    @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
->>>>>>> master
     private void listenTrigger(String message) throws Exception {
         Trigger trigger = mapper.readValue(message, Trigger.class);
         System.out.println(trigger);

@@ -102,12 +102,6 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
-            <groupId>com.internetitem</groupId>
-            <artifactId>logback-elasticsearch-appender</artifactId>
-            <version>1.6</version>
-        </dependency>
-=======
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>6.4</version>
@@ -124,7 +118,6 @@
         <artifactId>logback-elasticsearch-appender</artifactId>
         <version>1.6</version>
     </dependency>
->>>>>>> master
 
     </dependencies>
 
