@@ -111,15 +111,15 @@ public class Value {
     @Override
     public String toString() {
         return "{" +
-            " id='" + getId() + "'" +
-            ", entity='" + getEntity() + "'" +
-            ", parish='" + getParish() + "'" +
-            ", timestamp='" + getTimestamp() + "'" +
-            ", location='" + getLocation() + "'" +
-            ", temperature='" + getTemperature() + "'" +
-            ", humidity='" + getHumidity() + "'" +
-            ", pressure='" + getPressure() + "'" +
-            ", pm10='" + getPm10() + "'" +
+            " id:'" + getId() + "'" +
+            ", entity:'" + getEntity() + "'" +
+            ", parish:'" + getParish() + "'" +
+            ", timestamp:'" + getTimestamp() + "'" +
+            ", location:'" + getLocation() + "'" +
+            ", temperature:'" + getTemperature() + "'" +
+            ", humidity:'" + getHumidity() + "'" +
+            ", pressure:'" + getPressure() + "'" +
+            ", pm10:'" + getPm10() + "'" +
             "}";
     }
 
