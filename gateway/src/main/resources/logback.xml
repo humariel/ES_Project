@@ -1,15 +1,18 @@
-<configuration debug="true">
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %green(%d{yyyy-MM-dd HH:mm:ss}) %magenta([%thread]) %blue(%-5level) %yellow(%logger{36}) - %msg%n
+            </Pattern>  
+        </layout>
     </appender>
+
     <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
         <url>http://esp31:esp31password@192.168.160.103:9200/_bulk</url>
-        <index>esp31-messages</index>
-        <type>tester</type>
-        <loggerName>esp31-logger</loggerName> <!-- optional -->
-        <errorLoggerName>esp31-error-logger</errorLoggerName> <!-- optional -->
+        <index>esp31-logs</index>
+        <loggerName>es-logger</loggerName> <!-- optional -->
+        <errorLoggerName>es-error-logger</errorLoggerName> <!-- optional -->
         <connectTimeout>30000</connectTimeout> <!-- optional (in ms, default 30000) -->
         <errorsToStderr>false</errorsToStderr> <!-- optional (default false) -->
         <includeCallerData>false</includeCallerData> <!-- optional (default false) -->
@@ -20,12 +23,12 @@
         <sleepTime>250</sleepTime> <!-- optional (in ms, default 250) -->
         <rawJsonMessage>false</rawJsonMessage> <!-- optional (default false) -->
         <includeMdc>false</includeMdc> <!-- optional (default false) -->
-        <maxMessageSize>100</maxMessageSize> <!-- optional (default -1) -->
+        <maxMessageSize>100</maxMessageSize> <!-- optional (default -1 -->
         <authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" /> <!-- optional -->
         <properties>
             <property>
-                <name>cn</name>
-                <value>${CN}</value>
+                <name>host</name>
+                <value>${HOSTNAME}</value>
                 <allowEmpty>false</allowEmpty>
             </property>
             <property>
@@ -54,20 +57,20 @@
     </appender>
 
     <root level="info">
-    <appender-ref ref="STDOUT" />
-    <appender-ref ref="ELASTIC" />
+        <appender-ref ref="ELASTIC" />
+        <appender-ref ref="STDOUT" />
     </root>
 
     <logger name="es-error-logger" level="INFO" additivity="false">
-    <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT" />
     </logger>
 
     <logger name="es-logger" level="INFO" additivity="false">
-    <appender name="ES_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- ... -->
-        <encoder>
-            <pattern>%msg</pattern> <!-- This pattern is important, otherwise it won't be the raw Elasticsearch format anyomre -->
-        </encoder>
-    </appender>
+        <appender name="ES_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- ... -->
+            <encoder>
+                <pattern>%msg</pattern> <!-- This pattern is important, otherwise it won't be the raw Elasticsearch format anyomre -->
+            </encoder>
+        </appender>
     </logger>
-</configuration> 
+</configuration>

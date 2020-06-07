@@ -1,4 +1,4 @@
-package application;
+package alarm.breatheasy;
 
 import java.util.Date;
 
@@ -19,6 +19,7 @@ public class Value {
     private double humidity;
     private double pressure;
     private double pm10;
+
 
     public Value() {
         this.timestamp = (new Date()).getTime();
@@ -111,15 +112,15 @@ public class Value {
     @Override
     public String toString() {
         return "{" +
-            " id:'" + getId() + "'" +
-            ", entity:'" + getEntity() + "'" +
-            ", parish:'" + getParish() + "'" +
-            ", timestamp:'" + getTimestamp() + "'" +
-            ", location:'" + getLocation() + "'" +
-            ", temperature:'" + getTemperature() + "'" +
-            ", humidity:'" + getHumidity() + "'" +
-            ", pressure:'" + getPressure() + "'" +
-            ", pm10:'" + getPm10() + "'" +
+            " id='" + getId() + "'" +
+            ", entity='" + getEntity() + "'" +
+            ", parish='" + getParish() + "'" +
+            ", timestamp='" + getTimestamp() + "'" +
+            ", location='" + getLocation() + "'" +
+            ", temperature='" + getTemperature() + "'" +
+            ", humidity='" + getHumidity() + "'" +
+            ", pressure='" + getPressure() + "'" +
+            ", pm10='" + getPm10() + "'" +
             "}";
     }
 
