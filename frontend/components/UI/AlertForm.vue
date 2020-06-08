@@ -102,18 +102,12 @@ export default {
       evt.preventDefault()
       let newAlarm = {
         parish: this.parish,
-        time: this.time,
+        time: 10,
         conditions: this.conditions
       }
       await axios({
         method: 'post',
         url: 'http://localhost:8080/alarm',
-<<<<<<< HEAD
-        data: {
-          parish: this.parish,
-          time: 10,
-          conditions: this.conditions
-=======
         data: newAlarm
       })
       let currentAlarms = this.$store.state.alarms.filter(x => x.parish == this.parish)
@@ -125,7 +119,6 @@ export default {
         return {
           triggered: existingAlarm ? existingAlarm.triggered : false,
           ...x
->>>>>>> c0661d35f7f7a0b6eff77cbdbe262320c9cba4ba
         }
       })
       .forEach(x => {
