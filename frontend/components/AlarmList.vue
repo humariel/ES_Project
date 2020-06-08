@@ -4,11 +4,14 @@
       <div>
         <b-card-header header-tag="header" class="p-1" role="tab">
           <b-button class="alarm-button" block v-b-toggle="'accordion-'+index" >
-            {{
-              v.conditions.map(cond => {
-                return cond.type+' '+cond.operation+' '+cond.threshold
-              }).join(" && ")
-            }}
+            <img class="bell" :src="'icons/bell_'+ (v.triggered?'enabled':'disabled') +'.png'" height="32px"/>
+            <div class="header-text">
+              {{
+                v.conditions.map(cond => {
+                  return cond.type+' '+cond.operation+' '+cond.threshold
+                }).join(" && ")
+              }}
+            </div>
           </b-button>
         </b-card-header>
         <b-collapse :id="'accordion-'+index" accordion="my-accordion" role="tabpanel">
@@ -19,12 +22,20 @@
                 {{v.id}}
               </div>
             </b-card-text>
+            <h5>FETCHING PERIOD</h5>
+            <b-card-text>
+              Every {{v.time}} seconds
+            </b-card-text>
             <h5>CONDITIONS</h5>
             <b-card-text v-for="cond in v.conditions" :key="cond.type+cond.operation+cond.threshold">
               {{ cond.type }} {{ cond.operation }} {{ cond.threshold }}
             </b-card-text>
+            <h5>TRIGGERED</h5>
+            <b-card-text>
+              {{v.triggered ? 'Yes' : 'No'}}
+            </b-card-text>
             <h5>DELETE ALARM?</h5>
-            <img @click="deleteAlarm(v.id)" height="32px" src="icons/bin.png" />
+            <img @click="deleteAlarm(v.id)" height="32px" class="bin" src="icons/bin.png" />
           </b-card-body>
         </b-collapse>
       </div>
@@ -41,14 +52,14 @@ export default {
   },
   methods:{
     async deleteAlarm(id) {
-      await axios({
+      let r = await axios({
         method: 'delete',
         url: 'http://localhost:8080/alarm',
         data: {
           id
         }
       })
-      alert("ALARME REMOVIDO")
+      console.log('del res ',r)
       this.$store.dispatch('deleteAlarm',id)
     },
   }
@@ -56,14 +67,9 @@ export default {
 </script>
 
 <style scoped>
-.mb-1{
-  border-radius: 0;
-}
 
-.p-1{
-  width:100%;
-  border:0;
-  padding:0 !important;
+.bin:hover{
+  cursor:pointer;
 }
 
 .alarm-button{
@@ -72,6 +78,27 @@ export default {
   color: rgb(150, 150, 150);
   border:0;
   border-radius: 0;
+  display: flex;
+  justify-content: left;
+  align-content: left;
+}
+
+.header-text{
+  padding-top:5px;
+}
+
+.bell{
+  padding-right:10px;
+}
+
+.mb-1{
+  border-radius: 0;
+}
+
+.p-1{
+  width:100%;
+  border:0;
+  padding:0 !important;
 }
 
 h5{
