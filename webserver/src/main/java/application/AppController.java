@@ -99,22 +99,32 @@ public class AppController {
         template.convertAndSend("/topic/value", value);
     }
 
+    // listens to alarms to addd
     @KafkaListener(topics = "alarm", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
     private void listenerAlarm(String message) throws Exception {
         Alarm alarm = mapper.readValue(message, Alarm.class);
         alarmRepo.save(alarm);
     }
     
+    /*
     @KafkaListener(topics = "parish", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
     private void listenerParish(String message) throws Exception {
         sendKafkaMessage("trigger", message);
     }
+    */
 
     @KafkaListener(topics = "trigger", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
     private void listenTrigger(String message) throws Exception {
         Trigger trigger = mapper.readValue(message, Trigger.class);
         System.out.println(trigger);
         template.convertAndSend("/topic/trigger", trigger);
+    }
+
+    // listens to averages, they are constantly updated
+    @KafkaListener(topics = "averages", containerFactory="kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listenAverages(String message)  throws Exception {
+        Value avgValue = mapper.readValue(message, Value.class);
+        template.convertAndSend("/topic/average", avgValue);
     }
 
     public void sendKafkaMessage(String topic, String entity) {
@@ -130,5 +140,4 @@ public class AppController {
             }
         });
     }
-    
 }
