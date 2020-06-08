@@ -22,7 +22,7 @@ public class TriggerProducer {
 
 
 	public TriggerProducer() {
-		this("localhost:9092");
+		this("kafka:9092");
 	}
 
 	public TriggerProducer(String bootstrapServer) {

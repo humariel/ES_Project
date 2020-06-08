@@ -49,7 +49,7 @@ public class KConsumer extends Thread {
     
 
 	public KConsumer() {
-		this("localhost:9092");
+		this("kafka:9092");
 	}
 
 	public KConsumer(String bootstrapServer) {
