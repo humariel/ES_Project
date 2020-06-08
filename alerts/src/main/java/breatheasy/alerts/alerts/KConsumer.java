@@ -80,8 +80,9 @@ public class KConsumer extends Thread {
                         temp = hum = press = pm = 0;
                         long timestamp = (new Date()).getTime();
 						Value value = fromJsonParser.readValue(record.value(), Value.class);
+                        String key = value.getParish();
                         List<Value> nl;
-                        if (calculations.containsKey(value.getParish())) {
+                        if (calculations.containsKey(key)) {
                             nl = calculations.get(value.getParish());
                             nl.add(value);
                             while(((Value) ((LinkedList<Value>) nl).peek()).getTimestamp() <= value.getTimestamp()-10000){
@@ -98,6 +99,7 @@ public class KConsumer extends Thread {
                             pm += val.getPm10()/nl.size();
                             press += val.getPressure()/nl.size();
                         }
+                        triggerProducer.send("averages", fromJsonParser.writeValueAsString(new Value(key, timestamp, temp, hum, press, pm)));
                         List<Alarm> alarmList = repository.findAll();
                         for (Alarm a : alarmList) {
                             if (a.getParish().equals(value.getParish())){

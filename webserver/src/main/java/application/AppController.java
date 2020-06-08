@@ -126,6 +126,15 @@ public class AppController {
         template.convertAndSend("/topic/trigger", trigger);
     }
 
+    @KafkaListener(topics = "averages", containerFactory = "kafkaListenerContainerFactory", groupId = "breathe_consumers")
+    private void listenAverages(String message) throws Exception {
+        Value trigger = mapper.readValue(message, Value.class);
+        System.out.print("\u001B[0m\u001B[32m NEW VALUE ");
+        System.out.print(trigger);
+        System.out.println("\u001B[0m");
+        template.convertAndSend("/topic/averages", trigger);
+    }
+
     public void sendKafkaMessage(String topic, String entity) {
         ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, entity);
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
@@ -164,6 +173,9 @@ public class AppController {
             pm += val.getPm10()/nl.size();
             press += val.getPressure()/nl.size();
         }
+        Value val = new Value(value.getParish(), timestamp, temp, hum, press, pm);
+        //template.convertAndSend("/topic/averages", val);
+        sendKafkaMessage("averages", mapper.writeValueAsString(val));
         List<Alarm> alarmList = alarmRepo.findAll();
         alarmList.forEach(System.out::println);
         for (Alarm a : alarmList) {
@@ -200,11 +212,6 @@ public class AppController {
                 Trigger lastTrig;
                 if (trigs.size() > 0) {
                     lastTrig = trigs.get(trigs.size()-1);
-                    //System.out.println("HERE---"+lastTrig.toString());
-                    //System.out.println("Timestamp then: "+lastTrig.getTimestamp());
-                    //System.out.println("Timestamp now : "+timestamp);
-                    //System.out.println("Target timestp: "+(lastTrig.getTimestamp()+60*1000));
-                    //System.out.printf("Target is %s\n", (lastTrig.getTimestamp()+60*1000 <= timestamp) ? "smaller" : "bigger" );
                     if (trigger && (lastTrig.getTimestamp()+60*1000 <= timestamp)) {
                         System.out.println("SAVED");
                         Trigger trig = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());

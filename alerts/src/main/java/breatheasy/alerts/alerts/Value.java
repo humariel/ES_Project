@@ -42,6 +42,18 @@ public class Value {
         this.pm10 = pm10;
     }
 
+    public Value(String parish, long timestamp, double temperature, double humidity, double pressure, double pm10) {
+        this.id = null;
+        this.entity = null;
+        this.parish = parish;
+        this.timestamp = timestamp;
+        this.location = null;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
+        this.pm10 = pm10;
+    }
+
     public String getId() {
         return this.id;
     }
