@@ -1,19 +1,5 @@
 <template>
   <b-form @submit="onAlertCreation" @reset="onAlertReset">
-    <h5>FETCHING PERIOD (IN SECONDS)</h5>
-    <b-form-group
-      id="input-group-1"
-      label-for="input-1"
-      description="Period at which the alert will be checked"
-      style="margin-bottom: 0"
-    >
-      <b-form-input
-        id="input-1"
-        v-model="time"
-        required
-        placeholder="Enter fetching period"
-      ></b-form-input>
-    </b-form-group>
 
     <span style="margin-top: 1rem; display: block" v-if="conditions.length">{{(conditions)}}</span> 
     
@@ -116,7 +102,7 @@ export default {
         url: 'http://localhost:8080/alarm',
         data: {
           parish: this.parish,
-          time: this.time,
+          time: 10,
           conditions: this.conditions
         }
       })

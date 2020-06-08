@@ -44,9 +44,7 @@ export default {
       await axios({
         method: 'delete',
         url: 'http://localhost:8080/alarm',
-        data: {
-          id
-        }
+        data: id
       })
       alert("ALARME REMOVIDO")
       this.$store.dispatch('deleteAlarm',id)
