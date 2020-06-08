@@ -56,8 +56,8 @@ public class Location {
     @Override
     public String toString() {
         return "{" +
-            " type='" + getType() + "'" +
-            ", coordinates=[" + getCoords()[0] + ", " + getCoords()[1] +"]" + 
+            " type:'" + getType() + "'" +
+            ", coordinates:[" + getCoords()[0] + ", " + getCoords()[1] +"]" + 
             "}";
     }
 
