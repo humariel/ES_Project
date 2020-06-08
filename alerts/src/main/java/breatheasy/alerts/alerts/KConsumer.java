@@ -47,6 +47,7 @@ public class KConsumer extends Thread {
 	private static final ObjectMapper fromJsonParser = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(KConsumer.class);
     
+    private final int TIME_DYNAMO = 1000 * 60 * 10;
 
 	public KConsumer() {
 		this("localhost:9092");
@@ -79,12 +80,13 @@ public class KConsumer extends Thread {
                         double temp, hum, press, pm;
                         temp = hum = press = pm = 0;
                         long timestamp = (new Date()).getTime();
-						Value value = fromJsonParser.readValue(record.value(), Value.class);
+                        Value value = fromJsonParser.readValue(record.value(), Value.class);
+                        String key = value.getParish();
                         List<Value> nl;
-                        if (calculations.containsKey(value.getParish())) {
+                        if (calculations.containsKey(key)) {
                             nl = calculations.get(value.getParish());
                             nl.add(value);
-                            while(((Value) ((LinkedList<Value>) nl).peek()).getTimestamp() <= value.getTimestamp()-10000){
+                            while(((Value) ((LinkedList<Value>) nl).peek()).getTimestamp() <= value.getTimestamp()-TIME_DYNAMO){
                                 ((LinkedList<Value>) nl).removeFirst();
                             }
                         } else {
@@ -98,6 +100,7 @@ public class KConsumer extends Thread {
                             pm += val.getPm10()/nl.size();
                             press += val.getPressure()/nl.size();
                         }
+                        triggerProducer.send("averages", fromJsonParser.writeValueAsString(new Value(key, timestamp, temp, hum, press, pm)));
                         List<Alarm> alarmList = repository.findAll();
                         for (Alarm a : alarmList) {
                             if (a.getParish().equals(value.getParish())){
