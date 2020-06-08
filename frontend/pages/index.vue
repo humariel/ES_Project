@@ -35,7 +35,12 @@
             <div>{{selectedEntity.properties.id}}</div>
             <AlertForm :parish="selectedEntity.properties.id" :verticals="keys"/>
             <h5>LIST OF PARISH SENSOR ALARMS</h5>
-            <AlarmList :alarms="getAlarms"/>
+            <template v-if="getNumAlarms">
+              <AlarmList :alarms="getAlarms"/>
+            </template>
+            <template v-else>
+              <span>The selected parish doesn't have alarms</span>
+            </template>
           </template>
         </div>
       </div>
@@ -124,9 +129,8 @@ export default {
       })
 
       stompClient.subscribe("/topic/trigger", (message) => {
-        console.log(message)
-        const value = JSON.stringify(JSON.parse(message.body), null, 4);
-        alert(value)
+        const trigger = JSON.parse(message.body)
+        this.$store.dispatch('triggerAlarm',trigger.alarm)
       })
       
     });
@@ -185,6 +189,9 @@ export default {
     },
     getAlarms(){
       return this.$store.state.alarms.filter(x => x.parish == this.selectedEntity.properties.id)
+    },
+    getNumAlarms(){
+      return this.$store.state.alarms.filter(x => x.parish == this.selectedEntity.properties.id).length
     }
   }
 }

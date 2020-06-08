@@ -83,9 +83,10 @@ public class ScheduledTasks {
             if (time > 0 && time % a.getTime() == 0) {
                 // get values from alarm parish from alarm time frame
                 List<Value> valueList = valueRepo.getValuesFromParish(a.getParish(), timestamp - (1000 * time));
-                logger.info(valueList.get(0).toString());
+                
                 // if alarm conditions are true create, save and send trigger
-                if(verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
+                if(valueList.size() > 0 && verifyAlarmTrigger(a.getConditions(), valueList.get(0))){
+                    logger.info(valueList.get(0).toString());
                     Trigger trigger = new Trigger(UUID.randomUUID().toString(), a.getId(), a.getParish(), timestamp, a.getConditions());
                     sendKafkaMessage("trigger", mapper.writeValueAsString(trigger));
                     triggerRepo.save(trigger);

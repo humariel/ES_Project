@@ -54,8 +54,6 @@ public class AppController {
     @PostConstruct
     public void init() throws IOException {
 
-        System.out.println("HERE");
-
         ObjectMapper objectMapper = new ObjectMapper();
         Parish[] parishes = objectMapper.readValue(new File("aveiro.json"), Parish[].class);
         for(Parish parish : parishes)
