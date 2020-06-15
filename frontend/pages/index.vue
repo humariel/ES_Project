@@ -13,7 +13,9 @@
           </div>
         </l-tooltip>
       </l-marker>
-      <l-polygon @click="onParishClick(parish)" v-for="parish in geojson.features" :key="parish.properties.id" :lat-lngs="[parish.geometry.coordinates[0].map(a => [a[1], a[0]])]" :color="'blue'" :fillColor="'#000000aa'">
+      <l-polygon @click="onParishClick(parish)" v-for="parish in geojson.features" :key="parish.properties.id" :lat-lngs="[parish.geometry.coordinates[0].map(a => [a[1], a[0]])]"
+        :color="parishTriggered(parish)?'red':'blue'"
+        :fillColor="parishTriggered(parish)?'red':'blue'">
 
       </l-polygon>
     </l-map>
@@ -137,6 +139,10 @@ export default {
 
   },
   methods:{
+    parishTriggered(parish){
+      console.log(parish.properties.id)
+      return this.$store.state.alarms.filter(x => x.parish == parish.properties.id).some(x => x.triggered)
+    },
     isPointInsidePolygon(point, poly) {
       var polyPoints = poly;       
       var x = point.lat, y = point.lng;
