@@ -140,7 +140,6 @@ export default {
   },
   methods:{
     parishTriggered(parish){
-      console.log(parish.properties.id)
       return this.$store.state.alarms.filter(x => x.parish == parish.properties.id).some(x => x.triggered)
     },
     isPointInsidePolygon(point, poly) {

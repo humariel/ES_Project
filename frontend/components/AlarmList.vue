@@ -2,7 +2,7 @@
   <div role="tablist">
     <b-card v-for="(v,index) in alarms" :key="v.id" no-body class="mb-1">
       <div>
-        <b-card-header header-tag="header" class="p-1" role="tab">
+        <b-card-header @click="disableAlarm(v)" header-tag="header" class="p-1" role="tab">
           <b-button class="alarm-button" block v-b-toggle="'accordion-'+index" >
             <img class="bell" :src="'icons/bell_'+ (v.triggered?'enabled':'disabled') +'.png'" height="32px"/>
             <div class="header-text">
@@ -51,6 +51,9 @@ export default {
     alarms: Array,
   },
   methods:{
+    disableAlarm(alarm){
+      this.$store.state.alarms.find(x => x.id == alarm.id).triggered = false
+    },
     async deleteAlarm(id) {
       let r = await axios({
         method: 'delete',
